@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Attendance | Real-Time Transparency</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-[#F8FAFC] text-[#1E293B]">
+
+    <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 p-2 rounded-lg shadow-lg shadow-blue-200">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-white">
+                        <path d="M4 7V4H7M17 4H20V7M20 17V20H17M7 20H4V17M9 9H15V15H9V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 12V12.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <span class="text-2xl font-extrabold tracking-tight text-slate-950">Digital<span class="text-blue-600 font-medium">Attendance</span></span>
+            </div>
+
+            <div class="hidden md:flex items-center gap-8 font-medium text-slate-600">
+                <a href="#features" class="hover:text-blue-600 transition-colors text-sm uppercase tracking-wide">Features</a>
+                <a href="#rewards" class="hover:text-blue-600 transition-colors text-sm uppercase tracking-wide">Eligibility</a>
+                <a href="#" class="px-5 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition">Faculty Access</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="bg-white overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 py-20 flex flex-col md:flex-row items-center gap-16">
+            <div class="md:w-3/5 space-y-8">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-emerald-50 text-emerald-700 font-bold text-xs uppercase tracking-widest border border-emerald-100">
+                    <span class="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    System Online
+                </div>
+                <h1 class="text-5xl md:text-7xl font-extrabold text-slate-950 leading-tight tracking-tighter">
+                    Smart Tracking for <span class="text-blue-600 italic">Smart Students.</span>
+                </h1>
+                <p class="text-xl text-slate-500 leading-relaxed max-w-xl">
+                    Digital Attendance bridges the gap between students and university data. View your daily stats, predict your internal marks, and never miss an exam eligibility deadline.
+                </p>
+                <div class="flex items-center gap-4 pt-4">
+                    <a href="login.html" class="px-8 py-4 bg-slate-950 text-white rounded-xl font-bold shadow-xl shadow-slate-950/20 hover:translate-y-[-2px] transition-all">
+                        Enter Dashboard
+                    </a>
+                    <div class="text-slate-400 text-sm font-medium border-l pl-4 border-slate-200">
+                        Real-time synchronization<br>with University Cloud
+                    </div>
+                </div>
+            </div>
+
+            <div class="md:w-2/5 relative">
+                <div class="absolute -top-20 -right-20 w-64 h-64 bg-blue-100 rounded-full blur-3xl opacity-50"></div>
+                <div class="relative bg-slate-950 p-8 rounded-[2rem] shadow-2xl border border-slate-800">
+                    <div class="flex justify-between items-center mb-8">
+                        <div class="text-white font-bold tracking-tight">Current Stats</div>
+                        <i class="fas fa-ellipsis-h text-slate-600"></i>
+                    </div>
+                    
+                    <div class="text-6xl font-light text-white mb-2">92<span class="text-blue-500 font-black">%</span></div>
+                    <div class="text-slate-400 text-xs uppercase tracking-[0.2em] mb-6">Attendance Rating</div>
+                    
+                    <div class="space-y-4">
+                        <div class="p-4 bg-slate-900 rounded-2xl border border-slate-800 flex items-center justify-between">
+                            <span class="text-slate-300 text-sm">Marks Earned:</span>
+                            <span class="text-emerald-400 font-bold">6 / 6</span>
+                        </div>
+                        <div class="p-4 bg-blue-600/10 rounded-2xl border border-blue-500/20">
+                            <p class="text-blue-400 text-xs font-bold uppercase mb-1">Status</p>
+                            <p class="text-white text-sm">Perfectly Eligible for Finals</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="rewards" class="py-24 bg-slate-50 border-y border-slate-200">
+        <div class="max-w-4xl mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-black text-slate-950 uppercase tracking-tight">Grading Thresholds</h2>
+                <div class="h-1 w-20 bg-blue-600 mx-auto mt-4 rounded-full"></div>
+            </div>
+            
+            <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-200">
+                <div class="grid grid-cols-3 bg-slate-950 text-white p-6 text-xs font-bold uppercase tracking-widest text-center">
+                    <div>Percentage</div>
+                    <div>Marks Reward</div>
+                    <div>Exam Status</div>
+                </div>
+                
+                <div class="divide-y divide-slate-100">
+                    <div class="grid grid-cols-3 p-8 text-center items-center hover:bg-blue-50/30 transition">
+                        <div class="text-2xl font-black text-emerald-600">88% - 100%</div>
+                        <div class="font-bold text-slate-700">6 Marks</div>
+                        <div><span class="px-4 py-1.5 bg-emerald-100 text-emerald-700 rounded-full text-xs font-black">QUALIFIED</span></div>
+                    </div>
+                    <div class="grid grid-cols-3 p-8 text-center items-center hover:bg-blue-50/30 transition">
+                        <div class="text-2xl font-black text-blue-600">80% - 87.9%</div>
+                        <div class="font-bold text-slate-700">4 Marks</div>
+                        <div><span class="px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-xs font-black">QUALIFIED</span></div>
+                    </div>
+                    <div class="grid grid-cols-3 p-8 text-center items-center hover:bg-blue-50/30 transition">
+                        <div class="text-2xl font-black text-slate-400">67% - 79.9%</div>
+                        <div class="font-bold text-slate-700 text-slate-400">0 Marks</div>
+                        <div><span class="px-4 py-1.5 bg-slate-100 text-slate-500 rounded-full text-xs font-black">QUALIFIED</span></div>
+                    </div>
+                    <div class="grid grid-cols-3 p-8 text-center items-center bg-red-50/50">
+                        <div class="text-2xl font-black text-red-600">Below 67%</div>
+                        <div class="font-bold text-red-400">No Marks</div>
+                        <div><span class="px-4 py-1.5 bg-red-600 text-white rounded-full text-xs font-black italic underline">DEBARRED</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 text-center">
+        <div class="text-slate-400 text-xs font-bold uppercase tracking-[0.3em]">
+            Digital Attendance &copy; 2026 University Infrastructure
+        </div>
+    </footer>
+
+</body>
+</html>
