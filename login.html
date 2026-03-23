@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login | CampusConnect</title>
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #2563eb; 
+            --primary-hover: #1d4ed8;
+            --glass-bg: rgba(255, 255, 255, 0.92);
+            --text-dark: #1e293b;
+            --text-gray: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop') no-repeat center/cover;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(30,41,59,0.85), rgba(37,99,235,0.6));
+        }
+
+        .login-card {
+            position: relative;
+            z-index: 1;
+            max-width: 400px;
+            width: 100%;
+            padding: 2.5rem;
+            border-radius: 24px;
+            background: var(--glass-bg);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+        }
+
+        .form-group { margin-bottom: 1rem; }
+
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 10px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-card">
+    <h2>Student Login</h2>
+
+    <form>
+        <div class="form-group">
+            <label>I am a...</label>
+            <select class="input-field">
+                <option>Student</option>
+                <option>Faculty</option>
+                <option>Admin</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Roll Number</label>
+            <input type="text" class="input-field" placeholder="Enter ID">
+        </div>
+
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" class="input-field">
+        </div>
+
+        <button class="btn-login">Login</button>
+    </form>
+</div>
+
+</body>
+</html>
