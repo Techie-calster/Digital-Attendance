@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | Digital Attendance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+        .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(226, 232, 240, 0.8); }
+        .sidebar-link:hover { background-color: rgba(37, 99, 235, 0.1); color: #2563eb; }
+    </style>
+</head>
+<body class="flex min-h-screen">
+
+    <aside class="w-64 bg-white border-r border-slate-200 hidden lg:flex flex-col">
+        <div class="p-6 flex items-center gap-3">
+            <div class="bg-blue-600 p-2 rounded-lg text-white">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <span class="text-xl font-bold text-slate-900 tracking-tight">Digital<span class="text-blue-600">Atnd</span></span>
+        </div>
+        
+        <nav class="flex-1 px-4 space-y-2 mt-4">
+            <a href="#" class="sidebar-link flex items-center gap-3 p-3 rounded-xl text-blue-600 bg-blue-50 font-semibold">
+                <i class="fa-solid fa-house"></i> Overview
+            </a>
+            <!-- <a href="#" class="sidebar-link flex items-center gap-3 p-3 rounded-xl text-slate-500 transition">
+                <i class="fa-solid fa-book"></i> <!-- My Subjects -->
+            <!-- </a>
+            <a href="#" class="sidebar-link flex items-center gap-3 p-3 rounded-xl text-slate-500 transition">
+                <i class="fa-solid fa-calendar-check"></i> <!-- History -->
+            <!-- </a> -->
+        </nav>
+
+        <div class="p-4 border-t">
+            <a href="login.html" class="flex items-center gap-3 p-3 text-red-500 font-medium hover:bg-red-50 rounded-xl transition">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
+        </div>
+    </aside>
+
+    <main class="flex-1 p-4 lg:p-8 overflow-y-auto">
+        
+        <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div class="flex items-center gap-5">
+                <div class="w-20 h-20 rounded-2xl bg-slate-200 overflow-hidden border-4 border-white shadow-sm">
+                    <img src="image.jpg" alt="Student Photo"> <!-- Placeholder image, replace with actual student photo -->
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900">John Doe</h1><!-- replace with actual student name -->
+                    <div class="flex flex-wrap gap-x-4 text-sm text-slate-500 font-medium">
+                        <span><i class="fa-solid fa-fingerprint mr-1"></i> EN: 2024CSE045</span><!--  replace with actual student enrollment no. -->
+                        <span><i class="fa-solid fa-hashtag mr-1"></i> Roll: 45</span><!--  replace with actual student roll number -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex gap-3">
+                <div class="text-right hidden sm:block">
+                    <p class="text-xs font-bold text-slate-400 uppercase">Branch & Year</p>
+                    <p class="text-sm font-semibold text-slate-700">Computer Science | 3rd Year</p><!--  replace with actual student branch and year -->
+                </div>
+                <div class="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-xl flex items-center gap-2">
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                    <span class="text-xs font-bold uppercase tracking-wider">Active Semester</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="glass-card p-6 rounded-3xl shadow-sm relative overflow-hidden">
+                <p class="text-slate-500 text-sm font-semibold mb-1">Overall Attendance</p>
+                <h2 class="text-4xl font-black text-slate-900">82.5%</h2>
+                <div class="mt-4 w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                    <div class="bg-blue-600 h-full" style="width: 82.5%"></div>
+                </div>
+                <p class="mt-3 text-xs text-blue-600 font-bold tracking-wide">
+                    <i class="fa-solid fa-circle-info"></i> Currently Eligible
+                </p>
+            </div>
+
+            <div class="glass-card p-6 rounded-3xl shadow-sm border-l-4 border-amber-400">
+                <p class="text-slate-500 text-sm font-semibold mb-1">Internal Marks Earned</p>
+                <div class="flex items-baseline gap-2">
+                    <h2 class="text-4xl font-black text-slate-900">4</h2>
+                    <span class="text-slate-400 font-bold">/ 6 Marks</span>
+                </div>
+                <p class="mt-4 text-xs text-slate-500 leading-relaxed">
+                    Maintain <span class="text-slate-900 font-bold">88%</span> to reach the <span class="text-emerald-600 font-bold">6 Mark</span> tier.
+                </p>
+            </div>
+
+            <div class="bg-slate-900 p-6 rounded-3xl shadow-xl text-white">
+                <p class="text-slate-400 text-sm font-semibold mb-1">Decision Support</p>
+                <h3 class="text-lg font-bold mb-2">Can I Skip?</h3>
+                <div class="flex items-center gap-3 text-amber-400">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <p class="text-sm font-medium">Safe to skip 1 lecture only.</p>
+                </div>
+                <p class="mt-2 text-[10px] text-slate-500 uppercase tracking-widest font-bold">Based on 67% threshold</p>
+            </div>
+        </div>
+
+        <h2 class="text-xl font-bold text-slate-900 mb-6">Subject Breakdown</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-4 gap-2">
+            
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition">
+                <div class="w-full h-32 bg-slate-100 rounded-xl mb-4 overflow-hidden flex items-center justify-center">
+                    <i class="fa-solid fa-code text-4xl text-slate-300"></i>
+                </div>
+                <h3 class="font-bold text-slate-800 mb-1">Operating Systems</h3>
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">90%</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Internal: 6 Marks</span>
+                </div>
+                <button class="w-full py-2 bg-slate-50 text-slate-600 text-xs font-bold rounded-lg hover:bg-blue-600 hover:text-white transition">View Details</button>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition">
+                <div class="w-full h-32 bg-slate-100 rounded-xl mb-4 overflow-hidden flex items-center justify-center">
+                    <i class="fa-solid fa-code text-4xl text-slate-300"></i>
+                </div>
+                <h3 class="font-bold text-slate-800 mb-1">Software Engineering</h3>
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">90%</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Internal: 6 Marks</span>
+                </div>
+                <button class="w-full py-2 bg-slate-50 text-slate-600 text-xs font-bold rounded-lg hover:bg-blue-600 hover:text-white transition">View Details</button>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition">
+                <div class="w-full h-32 bg-slate-100 rounded-xl mb-4 overflow-hidden flex items-center justify-center">
+                    <i class="fa-solid fa-code text-4xl text-slate-300"></i>
+                </div>
+                <h3 class="font-bold text-slate-800 mb-1">Computer Systems Architecture</h3>
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">90%</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Internal: 6 Marks</span>
+                </div>
+                <button class="w-full py-2 bg-slate-50 text-slate-600 text-xs font-bold rounded-lg hover:bg-blue-600 hover:text-white transition">View Details</button>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition">
+                <div class="w-full h-32 bg-slate-100 rounded-xl mb-4 overflow-hidden flex items-center justify-center">
+                    <i class="fa-solid fa-code text-4xl text-slate-300"></i>
+                </div>
+                <h3 class="font-bold text-slate-800 mb-1">Fundamental of Data analytics</h3>
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">90%</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Internal: 6 Marks</span>
+                </div>
+                <button class="w-full py-2 bg-slate-50 text-slate-600 text-xs font-bold rounded-lg hover:bg-blue-600 hover:text-white transition">View Details</button>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition">
+                <div class="w-full h-32 bg-slate-100 rounded-xl mb-4 overflow-hidden flex items-center justify-center">
+                    <i class="fa-solid fa-code text-4xl text-slate-300"></i>
+                </div>
+                <h3 class="font-bold text-slate-800 mb-1">Value added course</h3>
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">90%</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Internal: 6 Marks</span>
+                </div>
+                <button class="w-full py-2 bg-slate-50 text-slate-600 text-xs font-bold rounded-lg hover:bg-blue-600 hover:text-white transition">View Details</button>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition">
+                <div class="w-full h-32 bg-slate-100 rounded-xl mb-4 overflow-hidden flex items-center justify-center">
+                    <i class="fa-solid fa-microchip text-4xl text-slate-300"></i>
+                </div>
+                <h3 class="font-bold text-slate-800 mb-1">AEC</h3>
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-md">72%</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Internal: 0 Marks</span>
+                </div>
+                <button class="w-full py-2 bg-slate-50 text-slate-600 text-xs font-bold rounded-lg hover:bg-blue-600 hover:text-white transition">View Details</button>
+            </div>
+
+            </div>
+    </main>
+
+</body>
+</html>
