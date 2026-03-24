@@ -3,105 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Login | CampusConnect</title>
+    <title>Portal Login | Digital Attendance</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            /* Academic Blue Theme */
-            --primary-color: #2563eb; 
+            --primary-blue: #2563eb;
             --primary-hover: #1d4ed8;
-            --glass-bg: rgba(255, 255, 255, 0.92);
-            --text-dark: #1e293b;
             --text-gray: #64748b;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
 
         body {
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            /* University Library Background */
-            background: url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop') no-repeat center center/cover;
-            position: relative;
-        }
-
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.85), rgba(37, 99, 235, 0.6));
-            z-index: 0;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(37, 99, 235, 0.7)), 
+                        url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070');
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
         }
 
         .login-card {
-            position: relative;
-            z-index: 1;
             width: 100%;
             max-width: 400px;
-            background: var(--glass-bg);
+            background: rgba(255, 255, 255, 0.95);
             padding: 2.5rem;
             border-radius: 24px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
         }
 
-        /* Branding */
-        .brand-section {
+        .brand-header {
             text-align: center;
             margin-bottom: 2rem;
         }
 
-        .university-logo {
-            width: 70px;
-            height: 70px;
-            background: var(--primary-color);
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: white;
-            margin-bottom: 1rem;
-            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
-        }
-
-        .brand-section h1 {
+        .brand-header h2 {
+            color: #1e293b;
             font-size: 1.5rem;
-            color: var(--text-dark);
             font-weight: 700;
         }
 
-        .brand-section p {
+        .brand-header p {
             font-size: 0.85rem;
             color: var(--text-gray);
         }
 
-        /* Form Styling */
-        .form-group {
-            margin-bottom: 1.25rem;
+        .form-group { margin-bottom: 1.25rem; }
+        
+        .label { 
+            display: block; 
+            margin-bottom: 0.5rem; 
+            font-size: 0.85rem; 
+            font-weight: 600; 
+            color: #1e293b;
         }
 
-        .label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: var(--text-dark);
-        }
-
-        .input-group {
-            position: relative;
-        }
+        .input-group { position: relative; }
 
         .input-field {
             width: 100%;
@@ -110,112 +73,85 @@
             border-radius: 12px;
             font-size: 0.95rem;
             transition: all 0.3s;
-            background: white;
         }
 
         .input-field:focus {
             outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            border-color: var(--primary-blue);
+            background: white;
         }
 
-        .field-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94a3b8;
+        .field-icon { 
+            position: absolute; 
+            left: 1rem; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            color: #94a3b8; 
         }
 
-        /* Login Button */
-        .btn-login {
+        .btn-submit {
             width: 100%;
             padding: 0.9rem;
-            background: var(--primary-color);
+            background: var(--primary-blue);
             color: white;
             border: none;
             border-radius: 12px;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s, background 0.2s;
+            transition: background 0.3s, transform 0.2s;
             margin-top: 1rem;
-            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
         }
 
-        .btn-login:hover {
+        .btn-submit:hover {
             background: var(--primary-hover);
-            transform: translateY(-2px);
+            transform: translateY(-1px);
         }
 
-        /* Links */
-        .help-links {
-            display: flex;
-            justify-content: space-between;
+        .footer-links {
             margin-top: 1.5rem;
-            font-size: 0.85rem;
+            text-align: center;
+            font-size: 0.8rem;
         }
 
-        .help-links a {
+        .footer-links a {
             color: var(--text-gray);
             text-decoration: none;
-            transition: color 0.2s;
         }
 
-        .help-links a:hover {
-            color: var(--primary-color);
+        .footer-links a:hover {
+            color: var(--primary-blue);
         }
-
-        /* Live Badge */
-        .live-badge {
-            background: #dcfce7;
-            color: #166534;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            position: absolute;
-            top: 2rem;
-            right: 2rem;
-            border: 1px solid #bbf7d0;
-        }
-
     </style>
 </head>
 <body>
 
     <div class="login-card">
-        <div class="live-badge">
-            <i class="fa-solid fa-circle fa-beat-fade" style="font-size: 8px; margin-right: 4px;"></i> LIVE
-        </div>
-
-        <div class="brand-section">
-            <div class="university-logo">
+        <div class="brand-header">
+            <div style="background: var(--primary-blue); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; margin: 0 auto 1rem; font-size: 1.4rem;">
                 <i class="fa-solid fa-graduation-cap"></i>
             </div>
-            <h1>Student Portal</h1>
-            <p>Real-Time Attendance System</p>
+            <h2>Portal Access</h2>
+            <p>Digital Attendance System</p>
         </div>
 
         <form>
             <div class="form-group">
-                <label class="label">I am a...</label>
+                <label class="label">Identity</label>
                 <div class="input-group">
                     <i class="fa-solid fa-user-tag field-icon"></i>
                     <select class="input-field" style="appearance: none; cursor: pointer;">
-                        <option value="student" selected>Student</option>
-                        <option value="faculty">Faculty / Professor</option>
-                        <option value="admin">Administrator</option>
+                        <option value="student">Student</option>
+                        <option value="faculty">Faculty Member</option>
                     </select>
-                    <i class="fa-solid fa-chevron-down" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 0.8rem; pointer-events: none;"></i>
                 </div>
             </div>
 
             <div class="form-group">
-                <label class="label">Roll Number / Enrollment ID</label>
+                <label class="label">ID Number</label>
                 <div class="input-group">
                     <i class="fa-solid fa-id-card field-icon"></i>
-                    <input type="text" class="input-field" placeholder="e.g. 2024-CSE-045" required>
+                    <input type="text" class="input-field" placeholder=" Enrollment ID" required>
                 </div>
             </div>
 
@@ -227,15 +163,14 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn-login">
-                Access Dashboard <i class="fa-solid fa-arrow-right" style="margin-left: 8px;"></i>
+            <button type="submit" class="btn-submit">
+                Login to Dashboard
             </button>
-
-            <div class="help-links">
-                <a href="#">Forgot Password?</a>
-                <a href="#">Contact Admin</a>
-            </div>
         </form>
+
+        <div class="footer-links">
+            <a href="#">Forgot Password?</a> • <a href="#">Contact Admin</a>
+        </div>
     </div>
 
 </body>
