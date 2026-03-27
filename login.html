@@ -135,7 +135,7 @@
             <p>Digital Attendance System</p>
         </div>
 
-        <form>
+        <!-- <form>
             <div class="form-group">
                 <label class="label">Identity</label>
                 <div class="input-group">
@@ -151,7 +151,7 @@
                 <label class="label">ID Number</label>
                 <div class="input-group">
                     <i class="fa-solid fa-id-card field-icon"></i>
-                    <input type="text" class="input-field" placeholder=" Enrollment ID" required>
+                    <input type="text" class="input-field" placeholder=" Enrollment ID/Faculty ID" required>
                 </div>
             </div>
 
@@ -166,12 +166,89 @@
             <button type="submit" class="btn-submit">
                 Login to Dashboard
             </button>
-        </form>
+            <div class="signup-redirect"style="margin-top: 25px; text-align: center;">
+                <p>New User? <a href="signup.html">Sign Up</a></p>
+            </div>
+        </form> -->
+
+        <form onsubmit="performLogin(event)">
+        <div class="form-group">
+            <label class="label">Identity</label>
+            <div class="input-group">
+                <i class="fa-solid fa-user-tag field-icon"></i>
+                <select id="role" class="input-field" style="appearance: none; cursor: pointer;">
+                    <option value="student">Student</option>
+                    <option value="faculty">Faculty Member</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="label">ID Number (Email)</label>
+            <div class="input-group">
+                <i class="fa-solid fa-id-card field-icon"></i>
+                <input type="text" id="login_id" class="input-field" placeholder=" Enrollment ID/Faculty ID" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="label">Password</label>
+            <div class="input-group">
+                <i class="fa-solid fa-lock field-icon"></i>
+                <input type="password" id="password" class="input-field" placeholder="••••••••" required>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-submit">
+            Login to Dashboard
+        </button>
+        <div class="signup-redirect" style="margin-top: 25px; text-align: center;">
+            <p>New User? <a href="signup.html">Sign Up</a></p>
+        </div>
+    </form>
 
         <div class="footer-links">
             <a href="#">Forgot Password?</a> • <a href="#">Contact Admin</a>
         </div>
     </div>
+    <script>
+        async function performLogin(e) {
+            e.preventDefault();
+            
+            // 1. Get values from the IDs we added
+            const role = document.getElementById('role').value;
+            const login_id = document.getElementById('login_id').value;
+            const password = document.getElementById('password').value;
 
+            try {
+                // 2. Send data to your Python (app.py)
+                const response = await fetch('http://127.0.0.1:5000/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        role: role, 
+                        login_id: login_id, 
+                        password: password 
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.status === "success") {
+                    // 3. Store session info for the dashboard to use
+                    localStorage.setItem('role', data.role);
+                    localStorage.setItem('userName', data.name);
+                    
+                    // 4. Redirect based on Python's instruction
+                    window.location.href = data.redirect;
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Could not connect to the server. Make sure app.py is running!");
+            }
+        }
+    </script>
 </body>
 </html>
