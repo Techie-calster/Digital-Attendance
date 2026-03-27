@@ -45,116 +45,246 @@
 
     <main class="flex-1 p-4 lg:p-8 overflow-y-auto">
         
-        <header class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-            <div class="flex items-center gap-6">
-                <div class="w-20 h-20 rounded-full border-4 border-white shadow-lg overflow-hidden bg-blue-100">
-                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Professor" alt="Faculty Photo">
+        <div id="dashboardView">
+            <header class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+                <div class="flex items-center gap-6">
+                    <div class="w-20 h-20 rounded-full border-4 border-white shadow-lg overflow-hidden bg-blue-100">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Professor" alt="Faculty Photo">
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-slate-900">Dr. Sarah Williams</h1>
+                        <p class="text-blue-600 font-semibold text-sm">Senior Professor | Dept. of CSE</p>
+                        <div class="flex gap-4 mt-1 text-xs text-slate-500">
+                            <span><i class="fa-solid fa-envelope mr-1"></i> s.williams@uni.edu</span>
+                            <span><i class="fa-solid fa-id-badge mr-1"></i> Faculty ID: FAC-9921</span>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <h1 class="text-2xl font-bold text-slate-900">Dr. Sarah Williams</h1>
-                    <p class="text-blue-600 font-semibold text-sm">Senior Professor | Dept. of CSE</p>
-                    <div class="flex gap-4 mt-1 text-xs text-slate-500">
-                        <span><i class="fa-solid fa-envelope mr-1"></i> s.williams@uni.edu</span>
-                        <span><i class="fa-solid fa-id-badge mr-1"></i> Faculty ID: FAC-9921</span>
+                
+                <div class="flex flex-col items-end gap-2">
+                    <button onclick="toggleModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-200 transition">
+                        <i class="fa-solid fa-plus mr-2"></i> Mark Today's Attendance
+                    </button>
+                </div>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div class="stat-card bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-3 bg-blue-50 text-blue-600 rounded-2xl">
+                            <i class="fa-solid fa-book-open text-xl"></i>
+                        </div>
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Active Subjects</span>
+                    </div>
+                    <h3 class="text-3xl font-black text-slate-900">03</h3>
+                    <p class="text-slate-500 text-xs mt-1">Across 2 Branches</p>
+                </div>
+
+                <div class="stat-card bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-3 bg-red-50 text-red-600 rounded-2xl">
+                            <i class="fa-solid fa-user-slash text-xl"></i>
+                        </div>
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Danger Zone</span>
+                    </div>
+                    <h3 class="text-3xl font-black text-slate-900 text-red-600">12</h3>
+                    <p class="text-slate-500 text-xs mt-1">Students below 67%</p>
+                </div>
+
+                <div class="stat-card bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-3 bg-emerald-50 text-emerald-600 rounded-2xl">
+                            <i class="fa-solid fa-award text-xl"></i>
+                        </div>
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Top Tier</span>
+                    </div>
+                    <h3 class="text-3xl font-black text-slate-900 text-emerald-600">45</h3>
+                    <p class="text-slate-500 text-xs mt-1">Students above 88%</p>
+                </div>
+            </div>
+
+            <h2 class="text-xl font-bold text-slate-900 mb-6">Current Teaching Assignments</h2>
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col md:flex-row gap-6">
+                    <div class="md:w-1/3 bg-slate-100 rounded-2xl flex items-center justify-center">
+                        <i class="fa-solid fa-laptop-code text-5xl text-slate-300"></i>
+                    </div>
+                    <div class="md:w-2/3 space-y-4">
+                        <div>
+                            <span class="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold rounded-md uppercase tracking-wider">CSE - Section A</span>
+                            <h3 class="text-xl font-bold text-slate-800 mt-2">Design & Analysis of Algorithms</h3>
+                            <p class="text-sm text-slate-500">Year: 3rd | Semester: VI</p>
+                        </div>
+                        <div class="flex justify-between items-center pt-2">
+                            <div class="text-center">
+                                <p class="text-xs text-slate-400 font-bold uppercase">Lectures</p>
+                                <p class="font-bold">42/60</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-xs text-slate-400 font-bold uppercase">Avg. Atnd</p>
+                                <p class="font-bold text-blue-600">78%</p>
+                            </div>
+                            <button class="bg-slate-900 text-white text-xs px-4 py-2 rounded-lg hover:bg-blue-600 transition font-bold">Manage Class</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col md:flex-row gap-6">
+                    <div class="md:w-1/3 bg-slate-100 rounded-2xl flex items-center justify-center">
+                        <i class="fa-solid fa-network-wired text-5xl text-slate-300"></i>
+                    </div>
+                    <div class="md:w-2/3 space-y-4">
+                        <div>
+                            <span class="px-3 py-1 bg-purple-50 text-purple-600 text-[10px] font-bold rounded-md uppercase tracking-wider">ECE - Section B</span>
+                            <h3 class="text-xl font-bold text-slate-800 mt-2">Computer Networks</h3>
+                            <p class="text-sm text-slate-500">Year: 2nd | Semester: IV</p>
+                        </div>
+                        <div class="flex justify-between items-center pt-2">
+                            <div class="text-center">
+                                <p class="text-xs text-slate-400 font-bold uppercase">Lectures</p>
+                                <p class="font-bold">28/50</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-xs text-slate-400 font-bold uppercase">Avg. Atnd</p>
+                                <p class="font-bold text-purple-600">84%</p>
+                            </div>
+                            <button class="bg-slate-900 text-white text-xs px-4 py-2 rounded-lg hover:bg-blue-600 transition font-bold">Manage Class</button>
+                        </div>
                     </div>
                 </div>
             </div>
-            
-            <div class="flex flex-col items-end gap-2">
-                <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-200 transition">
-                    <i class="fa-solid fa-plus mr-2"></i> Mark Today's Attendance
+        </div>
+        <section id="spreadsheetSection" class="hidden mt-10 bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <div>
+                    <h2 id="sheetTitle" class="text-xl font-bold text-slate-900 uppercase tracking-tight">Attendance Sheet</h2>
+                    <p class="text-xs text-slate-500 font-medium">Mark presence for today's session</p>
+                </div>
+                <button onclick="location.reload()" class="text-slate-400 hover:text-blue-600 transition text-sm font-bold">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Back to Dashboard
                 </button>
             </div>
-        </header>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <div class="stat-card bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-3 bg-blue-50 text-blue-600 rounded-2xl">
-                        <i class="fa-solid fa-book-open text-xl"></i>
-                    </div>
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Active Subjects</span>
-                </div>
-                <h3 class="text-3xl font-black text-slate-900">03</h3>
-                <p class="text-slate-500 text-xs mt-1">Across 2 Branches</p>
-            </div>
-
-            <div class="stat-card bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-3 bg-red-50 text-red-600 rounded-2xl">
-                        <i class="fa-solid fa-user-slash text-xl"></i>
-                    </div>
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Danger Zone</span>
-                </div>
-                <h3 class="text-3xl font-black text-slate-900 text-red-600">12</h3>
-                <p class="text-slate-500 text-xs mt-1">Students below 67%</p>
-            </div>
-
-            <div class="stat-card bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-3 bg-emerald-50 text-emerald-600 rounded-2xl">
-                        <i class="fa-solid fa-award text-xl"></i>
-                    </div>
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Top Tier</span>
-                </div>
-                <h3 class="text-3xl font-black text-slate-900 text-emerald-600">45</h3>
-                <p class="text-slate-500 text-xs mt-1">Students above 88%</p>
-            </div>
-        </div>
-
-        <h2 class="text-xl font-bold text-slate-900 mb-6">Current Teaching Assignments</h2>
-        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
             
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col md:flex-row gap-6">
-                <div class="md:w-1/3 bg-slate-100 rounded-2xl flex items-center justify-center">
-                    <i class="fa-solid fa-laptop-code text-5xl text-slate-300"></i>
-                </div>
-                <div class="md:w-2/3 space-y-4">
-                    <div>
-                        <span class="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold rounded-md uppercase tracking-wider">CSE - Section A</span>
-                        <h3 class="text-xl font-bold text-slate-800 mt-2">Design & Analysis of Algorithms</h3>
-                        <p class="text-sm text-slate-500">Year: 3rd | Semester: VI</p>
-                    </div>
-                    <div class="flex justify-between items-center pt-2">
-                        <div class="text-center">
-                            <p class="text-xs text-slate-400 font-bold uppercase">Lectures</p>
-                            <p class="font-bold">42/60</p>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-xs text-slate-400 font-bold uppercase">Avg. Atnd</p>
-                            <p class="font-bold text-blue-600">78%</p>
-                        </div>
-                        <button class="bg-slate-900 text-white text-xs px-4 py-2 rounded-lg hover:bg-blue-600 transition font-bold">Manage Class</button>
-                    </div>
-                </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50/50">
+                            <th class="p-4 text-xs font-black text-slate-400 uppercase tracking-widest">Roll No</th>
+                            <th class="p-4 text-xs font-black text-slate-400 uppercase tracking-widest">Student Name</th>
+                            <th class="p-4 text-xs font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
+                            <th class="p-4 text-xs font-black text-slate-400 uppercase tracking-widest text-center">Current %</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendanceTableBody"></tbody>
+                </table>
             </div>
 
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col md:flex-row gap-6">
-                <div class="md:w-1/3 bg-slate-100 rounded-2xl flex items-center justify-center">
-                    <i class="fa-solid fa-network-wired text-5xl text-slate-300"></i>
-                </div>
-                <div class="md:w-2/3 space-y-4">
-                    <div>
-                        <span class="px-3 py-1 bg-purple-50 text-purple-600 text-[10px] font-bold rounded-md uppercase tracking-wider">ECE - Section B</span>
-                        <h3 class="text-xl font-bold text-slate-800 mt-2">Computer Networks</h3>
-                        <p class="text-sm text-slate-500">Year: 2nd | Semester: IV</p>
-                    </div>
-                    <div class="flex justify-between items-center pt-2">
-                        <div class="text-center">
-                            <p class="text-xs text-slate-400 font-bold uppercase">Lectures</p>
-                            <p class="font-bold">28/50</p>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-xs text-slate-400 font-bold uppercase">Avg. Atnd</p>
-                            <p class="font-bold text-purple-600">84%</p>
-                        </div>
-                        <button class="bg-slate-900 text-white text-xs px-4 py-2 rounded-lg hover:bg-blue-600 transition font-bold">Manage Class</button>
-                    </div>
-                </div>
+            <div class="p-6 bg-slate-50 border-t border-slate-100 flex justify-end">
+                <button class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-bold shadow-lg transition">
+                    Submit Attendance
+                </button>
             </div>
-
-        </div>
+        </section>
     </main>
 
+    <div id="filterModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-slate-900">Select Class Details</h3>
+                    <button onclick="toggleModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Branch</label>
+                        <select id="branchSel" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-medium">
+                            <option value="">Select</option>
+                            <option>Computer Science (CSE)</option>
+                            <option>Electronics (ECE)</option>
+                            <option>Electrical (EEE)</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Year</label>
+                            <select id="yearSel" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                                <option value="">Select</option>
+                                <option>1st Year</option>
+                                <option>2nd Year</option>
+                                <option>3rd Year</option>
+                                <option>4th Year</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Section/Batch</label>
+                            <select id="secSel" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                                <option value="">Select</option>
+                                <option>Section A</option>
+                                <option>Section B</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="generateSheet()" class="w-full mt-8 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-200 transition">
+                    Open Attendance Sheet
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function toggleModal() {
+        document.getElementById('filterModal').classList.toggle('hidden');
+    }
+
+    function generateSheet() {
+        // 1. Get Values
+        const branch = document.getElementById('branchSel').value;
+        const year = document.getElementById('yearSel').value; // Corrected ID from yearSe
+        const section = document.getElementById('secSel').value;
+
+        // Validation: Don't proceed if fields are empty
+        if (!branch || !year || !section || branch === "Select") {
+            alert("Please select all fields");
+            return;
+        }
+
+        // 2. Hide Dashboard & Modal
+        document.getElementById('dashboardView').classList.add('hidden'); // This ID now exists
+        document.getElementById('filterModal').classList.add('hidden');
+
+        // 3. Show Spreadsheet & Update Title
+        document.getElementById('spreadsheetSection').classList.remove('hidden');
+        document.getElementById('sheetTitle').innerText = `${branch} - ${year} (${section})`;
+
+        renderTableRows();
+    }
+
+    function renderTableRows() {
+        const tbody = document.getElementById('attendanceTableBody');
+        const students = [
+            { roll: "2021CSE01", name: "Alice Johnson", attended: 30, total: 40 },
+            { roll: "2021CSE02", name: "Bob Smith", attended: 22, total: 40 },
+            { roll: "2021CSE03", name: "Charlie Davis", attended: 38, total: 40 }
+        ];
+
+        tbody.innerHTML = students.map(s => {
+            const perc = ((s.attended / s.total) * 100).toFixed(1);
+            return `
+                <tr class="border-b border-slate-50 hover:bg-slate-50 transition">
+                    <td class="p-4 text-sm font-bold text-slate-500">${s.roll}</td>
+                    <td class="p-4 text-sm font-bold text-slate-800">${s.name}</td>
+                    <td class="p-4 text-center">
+                        <input type="checkbox" checked class="w-5 h-5 accent-blue-600">
+                    </td>
+                    <td class="p-4 text-center font-bold text-slate-700">${perc}%</td>
+                </tr>
+            `;
+        }).join('');
+    }
+    </script>
 </body>
 </html>
