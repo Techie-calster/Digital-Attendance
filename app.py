@@ -17,7 +17,7 @@ KEY = "Supabase Key here"
 # KEY = "" ----- paste key here-----
 
 URL = ""# ---- paste URL here-----
-KEY = "" #----- paste key here-----
+KEY = "" #----- paste secret key here-----
 supabase: Client = create_client(URL, KEY)
 @app.route('/api/login', methods=['POST'])
 def login():
