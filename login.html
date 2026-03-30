@@ -191,13 +191,22 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <label class="label">Password</label>
-            <div class="input-group">
-                <i class="fa-solid fa-lock field-icon"></i>
-                <input type="password" id="password" class="input-field" placeholder="••••••••" required>
-            </div>
-        </div>
+       <div class="form-group">
+    <label class="label">Password</label>
+    <div class="input-group" style="position: relative;">
+        
+        <i class="fa-solid fa-lock field-icon"></i>
+        
+        <input type="password" id="password" placeholder="Enter password">
+
+
+        <i onclick="togglePassword()" 
+           class="fa-solid fa-eye"
+           style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+        </i>
+
+    </div>
+</div>
 
         <button type="submit" class="btn-submit">
             Login to Dashboard
@@ -260,6 +269,16 @@ if (!login_id || !password) {
                 alert("Could not connect to the server. Make sure app.py is running!");
             }
         }
+    // 👁️ TOGGLE PASSWORD VISIBILITY
+    function togglePassword() {
+        const pass = document.getElementById("password");
+
+        if (pass.type === "password") {
+            pass.type = "text";
+        } else {
+            pass.type = "password";
+        }
+    }
     </script>
 </body>
 </html>
