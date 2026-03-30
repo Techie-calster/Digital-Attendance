@@ -46,15 +46,17 @@
         
         <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div class="flex items-center gap-5">
-                <div class="w-20 h-20 rounded-2xl bg-slate-200 overflow-hidden border-4 border-white shadow-sm">
-                    <img src="image.jpg" alt="Student Photo"> <!-- Placeholder image, replace with actual student photo -->
-                </div>
+               <div class="w-20 h-20 rounded-2xl bg-slate-200 overflow-hidden border-4 border-white shadow-sm">
+    <div class="w-full h-full flex items-center justify-center text-slate-400">
+        <i class="fa-solid fa-user text-3xl"></i>
+    </div>
+</div>
                 <div>
-                    <h1 class="text-2xl font-bold text-slate-900">John Doe</h1><!-- replace with actual student name -->
-                    <div class="flex flex-wrap gap-x-4 text-sm text-slate-500 font-medium">
-                        <span><i class="fa-solid fa-fingerprint mr-1"></i> EN: 2024CSE045</span><!--  replace with actual student enrollment no. -->
-                        <span><i class="fa-solid fa-hashtag mr-1"></i> Roll: 45</span><!--  replace with actual student roll number -->
-                    </div>
+                    <h1 id="studentName" class="text-2xl font-bold text-slate-900"></h1>
+                            <div class="flex flex-wrap gap-x-4 text-sm text-slate-500 font-medium">
+            <span id="enrollment"></span>
+            <span id="roll"></span>
+        </div>
                 </div>
             </div>
             
@@ -73,109 +75,274 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div class="glass-card p-6 rounded-3xl shadow-sm relative overflow-hidden">
                 <p class="text-slate-500 text-sm font-semibold mb-1">Overall Attendance</p>
-                <h2 class="text-4xl font-black text-slate-900">82.5%</h2>
+                <h2 id="attendance" class="text-4xl font-black text-slate-900">--%</h2>
+<p class="mt-2 text-sm text-slate-500">
+    Present: <span id="present">--</span> /
+    Total: <span id="total">--</span>
+</p>
                 <div class="mt-4 w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                    <div class="bg-blue-600 h-full" style="width: 82.5%"></div>
+                    <div id="progressBar" class="bg-blue-600 h-full" style="width: 0%"></div>
                 </div>
                 <p class="mt-3 text-xs text-blue-600 font-bold tracking-wide">
                     <i class="fa-solid fa-circle-info"></i> Currently Eligible
                 </p>
             </div>
 
-            <div class="glass-card p-6 rounded-3xl shadow-sm border-l-4 border-amber-400">
+            <!-- <div class="glass-card p-6 rounded-3xl shadow-sm border-l-4 border-amber-400">
                 <p class="text-slate-500 text-sm font-semibold mb-1">Internal Marks Earned</p>
                 <div class="flex items-baseline gap-2">
-                    <h2 class="text-4xl font-black text-slate-900">4</h2>
-                    <span class="text-slate-400 font-bold">/ 6 Marks</span>
+                   <h2 id="marks" class="text-4xl font-black text-slate-900">--</h2>
+                   <span class="text-slate-400 font-bold">Marks</span>
                 </div>
                 <p class="mt-4 text-xs text-slate-500 leading-relaxed">
                     Maintain <span class="text-slate-900 font-bold">88%</span> to reach the <span class="text-emerald-600 font-bold">6 Mark</span> tier.
                 </p>
-            </div>
+            </div> -->
 
             <div class="bg-slate-900 p-6 rounded-3xl shadow-xl text-white">
                 <p class="text-slate-400 text-sm font-semibold mb-1">Decision Support</p>
                 <h3 class="text-lg font-bold mb-2">Can I Skip?</h3>
                 <div class="flex items-center gap-3 text-amber-400">
                     <i class="fa-solid fa-triangle-exclamation"></i>
-                    <p class="text-sm font-medium">Safe to skip 1 lecture only.</p>
+                    <p id="skipText" class="text-sm font-medium">--</p>
                 </div>
                 <p class="mt-2 text-[10px] text-slate-500 uppercase tracking-widest font-bold">Based on 67% threshold</p>
             </div>
         </div>
 
         <h2 class="text-xl font-bold text-slate-900 mb-6">Subject Breakdown</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-4 gap-2">
-            
-            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition">
-                <div class="w-full h-32 bg-slate-100 rounded-xl mb-4 overflow-hidden flex items-center justify-center">
-                    <i class="fa-solid fa-code text-4xl text-slate-300"></i>
-                </div>
-                <h3 class="font-bold text-slate-800 mb-1">Operating Systems</h3>
-                <div class="flex justify-between items-center mb-4">
-                    <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">90%</span>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase">Internal: 6 Marks</span>
-                </div>
-                <button class="w-full py-2 bg-slate-50 text-slate-600 text-xs font-bold rounded-lg hover:bg-blue-600 hover:text-white transition">View Details</button>
-            </div>
-            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition">
-                <div class="w-full h-32 bg-slate-100 rounded-xl mb-4 overflow-hidden flex items-center justify-center">
-                    <i class="fa-solid fa-code text-4xl text-slate-300"></i>
-                </div>
-                <h3 class="font-bold text-slate-800 mb-1">Software Engineering</h3>
-                <div class="flex justify-between items-center mb-4">
-                    <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">90%</span>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase">Internal: 6 Marks</span>
-                </div>
-                <button class="w-full py-2 bg-slate-50 text-slate-600 text-xs font-bold rounded-lg hover:bg-blue-600 hover:text-white transition">View Details</button>
-            </div>
-            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition">
-                <div class="w-full h-32 bg-slate-100 rounded-xl mb-4 overflow-hidden flex items-center justify-center">
-                    <i class="fa-solid fa-code text-4xl text-slate-300"></i>
-                </div>
-                <h3 class="font-bold text-slate-800 mb-1">Computer Systems Architecture</h3>
-                <div class="flex justify-between items-center mb-4">
-                    <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">90%</span>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase">Internal: 6 Marks</span>
-                </div>
-                <button class="w-full py-2 bg-slate-50 text-slate-600 text-xs font-bold rounded-lg hover:bg-blue-600 hover:text-white transition">View Details</button>
-            </div>
-            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition">
-                <div class="w-full h-32 bg-slate-100 rounded-xl mb-4 overflow-hidden flex items-center justify-center">
-                    <i class="fa-solid fa-code text-4xl text-slate-300"></i>
-                </div>
-                <h3 class="font-bold text-slate-800 mb-1">Fundamental of Data analytics</h3>
-                <div class="flex justify-between items-center mb-4">
-                    <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">90%</span>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase">Internal: 6 Marks</span>
-                </div>
-                <button class="w-full py-2 bg-slate-50 text-slate-600 text-xs font-bold rounded-lg hover:bg-blue-600 hover:text-white transition">View Details</button>
-            </div>
-            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition">
-                <div class="w-full h-32 bg-slate-100 rounded-xl mb-4 overflow-hidden flex items-center justify-center">
-                    <i class="fa-solid fa-code text-4xl text-slate-300"></i>
-                </div>
-                <h3 class="font-bold text-slate-800 mb-1">Value added course</h3>
-                <div class="flex justify-between items-center mb-4">
-                    <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">90%</span>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase">Internal: 6 Marks</span>
-                </div>
-                <button class="w-full py-2 bg-slate-50 text-slate-600 text-xs font-bold rounded-lg hover:bg-blue-600 hover:text-white transition">View Details</button>
-            </div>
-            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition">
-                <div class="w-full h-32 bg-slate-100 rounded-xl mb-4 overflow-hidden flex items-center justify-center">
-                    <i class="fa-solid fa-microchip text-4xl text-slate-300"></i>
-                </div>
-                <h3 class="font-bold text-slate-800 mb-1">AEC</h3>
-                <div class="flex justify-between items-center mb-4">
-                    <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-md">72%</span>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase">Internal: 0 Marks</span>
-                </div>
-                <button class="w-full py-2 bg-slate-50 text-slate-600 text-xs font-bold rounded-lg hover:bg-blue-600 hover:text-white transition">View Details</button>
-            </div>
-
-            </div>
+        <div id="subjectsContainer" class="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-4 gap-2"></div>
+                
+                
     </main>
+ <div id="subjectModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-xl w-96 shadow-lg relative">
+        
+        <h2 id="modalSubjectName" class="text-xl font-bold mb-4 text-center"></h2>
 
+        <div class="space-y-2 text-sm text-slate-700">
+            <p><b>Attendance:</b> <span id="modalAttendance"></span></p>
+            <p><b>Present:</b> <span id="modalPresent"></span></p>
+            <p><b>Total Classes:</b> <span id="modalTotal"></span></p>
+            <p><b>Marks:</b> <span id="modalMarks"></span></p>
+        </div>
+
+        <button onclick="closeModal()" 
+            class="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
+            Close
+        </button>
+
+    </div>
+</div>
+<script>
+     // MARKS (UPDATED LOGIC)
+function calculateMarks(percentage) {
+    if (percentage < 67) return 0;
+    else if (percentage < 70) return 1.2;
+    else if (percentage < 75) return 2.4;
+    else if (percentage < 80) return 3.6;
+    else if (percentage < 85) return 4.8;
+    else return 6;
+}
+
+//calculateMARKS
+function calculateSkip(present, total) {
+    if (total === 0) return 0;
+
+    const maxSkip = Math.floor(((present / 0.67) - total) + 0.0001);
+
+    return maxSkip < 0 ? 0 : maxSkip;
+}
+function viewDetails(subjectName, percentage, present, total, marks) {
+    document.getElementById("modalSubjectName").innerText = subjectName;
+    document.getElementById("modalAttendance").innerText = percentage + "%";
+    document.getElementById("modalPresent").innerText = present;
+    document.getElementById("modalTotal").innerText = total;
+    document.getElementById("modalMarks").innerText = marks;
+
+    document.getElementById("subjectModal").classList.remove("hidden");
+}
+
+function closeModal() {
+    document.getElementById("subjectModal").classList.add("hidden");
+}
+
+async function loadStudentData() {
+    const enrollment = localStorage.getItem("userId");
+
+    // 1. Get student info
+    const res = await fetch(`http://127.0.0.1:5000/api/student/${enrollment}`);
+    const student = await res.json();
+    console.log("Student object:", student);
+    console.log("Student:", student);
+    console.log("Enrollment from localStorage:", enrollment);
+    //console.log("Attendance Data:", attendance);
+
+    if (student) {
+        document.getElementById("studentName").innerText = student.name;
+        document.getElementById("enrollment").innerText = "EN: " + student.enrollment_no;
+document.getElementById("roll").innerText = "Roll: " + student.roll_no;
+        // 2. Get attendance using student_id
+        const attRes = await fetch(`http://127.0.0.1:5000/api/attendance/${student.student_id}`);
+        const attendance = await attRes.json();
+        // 🔥 LOAD SUBJECTS FROM DB
+
+        //console.log("Attendance:", attendance);
+        // 1. Fetch subjects
+        const subRes = await fetch(`http://127.0.0.1:5000/api/student-subjects/${student.student_id}`);
+const subjects = await subRes.json() || [];
+
+const attRes2 = await fetch(`http://127.0.0.1:5000/api/subject-attendance/${student.student_id}`);
+const attendanceMap = await attRes2.json() || {};
+
+const container = document.getElementById("subjectsContainer");
+container.innerHTML = "";
+
+// 🔴 IF NO SUBJECTS
+if (subjects.length === 0) {
+    container.innerHTML = `
+        <div class="col-span-full text-center text-slate-400">
+            No subjects assigned yet
+        </div>
+    `;
+} else {
+    subjects.sort((a, b) => {
+    const attA = attendanceMap[a.subject_id] || { percentage: 0 };
+    const attB = attendanceMap[b.subject_id] || { percentage: 0 };
+
+    return attA.percentage - attB.percentage; // ascending (worst first)
+});
+    subjects.forEach(sub => {
+    const subjectId = sub.subject_id;
+    const subjectName = sub.subjects.subject_name;
+    const facultyName = sub.subjects.faculty?.name || "N/A";
+
+    const att = attendanceMap[subjectId] || {
+        present: 0,
+        total: 0,
+        percentage: 0
+    };
+
+    const skip = calculateSkip(att.present, att.total);
+
+    let skipMsg = "";
+
+    if (att.total === 0) {
+        skipMsg = "No data";
+    } else if (skip === 0) {
+        skipMsg = "❌ You can't skip";
+    } else if (skip === 1) {
+        skipMsg = "⚠️ You can skip 1 class";
+    } else {
+        skipMsg = `✅ You can skip ${skip} classes`;
+    }
+
+        // MARKS
+       
+
+let marks = calculateMarks(att.percentage);
+
+        // COLOR
+        let color = "text-gray-400 bg-gray-100";
+        if (att.total > 0) {
+            if (att.percentage >= 88) color = "text-emerald-600 bg-emerald-50";
+            else if (att.percentage >= 80) color = "text-blue-600 bg-blue-50";
+            else if (att.percentage >= 67) color = "text-amber-600 bg-amber-50";
+            else color = "text-red-600 bg-red-50";
+        }
+
+        container.innerHTML += `
+            <div class="bg-white p-5 rounded-2xl border shadow-sm">
+               <h3 class="font-bold text-slate-800 mb-1">${subjectName}</h3>
+<p class="text-xs text-slate-400 mb-2">Faculty: ${facultyName}</p>
+
+                <div class="flex justify-between mb-2">
+                    <span class="px-2 py-1 text-xs font-bold rounded ${color}">
+                        ${att.total > 0 ? att.percentage + "%" : "--"}
+                    </span>
+                    <span class="text-xs text-slate-400">
+                        ${att.total > 0 ? marks.toFixed(1) + " Marks" : "--"}
+                    </span>
+                </div>
+
+                <p class="text-xs text-slate-500 mb-1">
+    ${att.total > 0 ? `Present: ${att.present} / ${att.total}` : "No attendance yet"}
+</p>
+
+<p class="text-[11px] font-semibold ${
+    skip === 0 ? 'text-red-500' :
+    skip === 1 ? 'text-amber-500' :
+    'text-emerald-600'
+}">
+    ${skipMsg}
+</p>
+
+               <button onclick="viewDetails(
+    '${subjectName}',
+    ${att.percentage},
+    ${att.present},
+    ${att.total},
+    '${marks.toFixed(1)} Marks'
+)"
+class="w-full py-2 bg-slate-100 text-xs rounded hover:bg-blue-600 hover:text-white transition">
+View Details
+</button>
+            </div>
+        `;
+    });
+}
+        // 3. Show on UI
+     // SAFE DATA EXTRACTION
+const percentage = (attendance && attendance.total_classes > 0)
+    ? attendance.percentage
+    : 0;
+
+const present = (attendance && attendance.present !== undefined)
+    ? attendance.present
+    : 0;
+
+const total = (attendance && attendance.total_classes !== undefined)
+    ? attendance.total_classes
+    : 0;
+
+
+// 🎯 UI UPDATE
+
+// Attendance %
+document.getElementById("attendance").innerText =
+    total > 0 ? percentage + "%" : "--";
+
+// Progress bar
+document.getElementById("progressBar").style.width =
+    total > 0 ? percentage + "%" : "0%";
+
+// Present / Total
+document.getElementById("present").innerText = total > 0 ? present : "--";
+document.getElementById("total").innerText = total > 0 ? total : "--";
+// 🔥 SKIP LOGIC
+const skip = calculateSkip(present, total);
+
+let message = "";
+
+if (total === 0) {
+    message = "No data available";
+} else if (skip === 0) {
+    message = "Attendance low! You cannot skip any class.";
+} else if (skip === 1) {
+    message = "Safe to skip 1 lecture only.";
+} else {
+    message = `Safe to skip ${skip} lectures.`;
+}
+
+document.getElementById("skipText").innerText = message;
+// 🔥 UPDATE TOP MARKS
+document.getElementById("marks").innerText =
+    total > 0 ? calculateMarks(percentage).toFixed(1) : "--";
+    }
+    
+}
+// CALL FUNCTION ON PAGE LOAD
+window.onload = loadStudentData;
+</script>
 </body>
 </html>

@@ -234,16 +234,23 @@
 
                 const data = await response.json();
 
+                console.log(data); // 👈 ADD THIS
+
                 if (data.status === "success") {
-                    // 3. Store session info for the dashboard to use
-                    localStorage.setItem('role', data.role);
-                    localStorage.setItem('userName', data.name);
-                    
-                    // 4. Redirect based on Python's instruction
-                    window.location.href = data.redirect;
-                } else {
-                    alert(data.message);
-                }
+    // 🔥 STORE EVERYTHING CORRECTLY
+    localStorage.setItem("userName", data.name);
+    localStorage.setItem("role", data.role);
+    localStorage.setItem("userId", data.enrollment_no);
+
+    // ⚠️ MOST IMPORTANT LINE (FIX)
+    //localStorage.setItem("userId", login_id);
+
+    console.log("Stored userId:", login_id); // DEBUG
+
+    window.location.href = data.redirect;
+} else {
+                alert(data.message || "Invalid login credentials");
+            }
             } catch (error) {
                 console.error("Error:", error);
                 alert("Could not connect to the server. Make sure app.py is running!");
