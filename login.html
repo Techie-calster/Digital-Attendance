@@ -219,7 +219,11 @@
             const role = document.getElementById('role').value;
             const login_id = document.getElementById('login_id').value;
             const password = document.getElementById('password').value;
-
+            // Validation
+if (!login_id || !password) {
+    alert("Please fill all fields");
+    return;
+}
             try {
                 // 2. Send data to your Python (app.py)
                 const response = await fetch('http://127.0.0.1:5000/api/login', {
