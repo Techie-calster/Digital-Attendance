@@ -19,6 +19,7 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 # -------------------------
 # 🔐 LOGIN (FIXED ✅)
 # -------------------------
+
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -118,7 +119,7 @@ def subject_attendance(student_id):
             .select("subject_id, status") \
             .eq("student_id", student_id).execute()
 
-        records = data.data or []   # 🔥 FIX
+        records = data.data or []   
 
         result = {}
 
