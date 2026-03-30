@@ -191,35 +191,35 @@
             </div>
         </div>
 
-       <div class="form-group">
+      <div class="form-group">
     <label class="label">Password</label>
+
     <div class="input-group" style="position: relative;">
-        
+
+        <!-- Lock icon -->
         <i class="fa-solid fa-lock field-icon"></i>
-        
-        <input type="password" id="password" class="input-field" placeholder="Enter password" style="padding-right: 2.5rem;" required>
 
 
+        <!-- Input -->
+        <input 
+            type="password" 
+            id="password" 
+            placeholder="Enter your password"
+            style="width: 100%; padding: 10px 40px; border: 1px solid #ccc; border-radius: 8px;"
+        >
+
+        <!-- Eye icon -->
         <i onclick="togglePassword()" 
            class="fa-solid fa-eye"
-           style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+           style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer;">
         </i>
 
     </div>
+    <button type="submit" class="btn-submit">
+    Login to Dashboard
+</button>
 </div>
-
-        <button type="submit" class="btn-submit">
-            Login to Dashboard
-        </button>
-        <div class="signup-redirect" style="margin-top: 25px; text-align: center;">
-            <p>New User? <a href="signup.html">Sign Up</a></p>
-        </div>
-    </form>
-
-        <div class="footer-links">
-            <a href="#">Forgot Password?</a> • <a href="#">Contact Admin</a>
-        </div>
-    </div>
+</form>
     <script>
         async function performLogin(e) {
             e.preventDefault();
@@ -250,18 +250,23 @@ if (!login_id || !password) {
                 console.log(data); // 👈 ADD THIS
 
                 if (data.status === "success") {
-    // 🔥 STORE EVERYTHING CORRECTLY
+
     localStorage.setItem("userName", data.name);
     localStorage.setItem("role", data.role);
-    localStorage.setItem("userId", data.enrollment_no);
 
-    // ⚠️ MOST IMPORTANT LINE (FIX)
-    //localStorage.setItem("userId", login_id);
+    // 🔥 FIX: handle both student & faculty
+    if (data.role === "student") {
+        localStorage.setItem("userId", data.enrollment_no);
+    } else {
+        localStorage.setItem("userId", data.employee_id);
+    }
 
-    console.log("Stored userId:", login_id); // DEBUG
+    console.log("Stored userId:", localStorage.getItem("userId"));
 
     window.location.href = data.redirect;
-} else {
+
+}
+else {
                 alert(data.message || "Invalid login credentials");
             }
             } catch (error) {
