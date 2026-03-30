@@ -169,10 +169,24 @@ function closeModal() {
 
 async function loadStudentData() {
     const enrollment = localStorage.getItem("userId");
-
+    // 🔄 Loading state
+document.getElementById("studentName").innerText = "Loading...";
+document.getElementById("attendance").innerText = "--%";
+document.getElementById("skipText").innerText = "Loading...";
     // 1. Get student info
+    let student;
+
+try {
     const res = await fetch(`http://127.0.0.1:5000/api/student/${enrollment}`);
-    const student = await res.json();
+    student = await res.json();
+} catch (error) {
+    alert("Server not reachable");
+    return;
+}
+    if (!student || student.error) {
+    alert("Failed to load student data");
+    return;
+}
     console.log("Student object:", student);
     console.log("Student:", student);
     console.log("Enrollment from localStorage:", enrollment);
