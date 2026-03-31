@@ -122,6 +122,15 @@
         .footer-links a:hover {
             color: var(--primary-blue);
         }
+        /* REMOVE DEFAULT BROWSER PASSWORD EYE ICON */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
+
+input[type="password"]::-webkit-credentials-auto-fill-button {
+    display: none !important;
+}
     </style>
 </head>
 <body>
@@ -210,9 +219,10 @@
 
         <!-- Eye icon -->
         <i onclick="togglePassword()" 
-           class="fa-solid fa-eye"
-           style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer;">
-        </i>
+   id="eyeIcon"
+   class="fa-solid fa-eye text-gray-700"
+   style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+</i>
 
     </div>
     <button type="submit" class="btn-submit">
@@ -276,15 +286,20 @@ else {
             }
         }
     // 👁️ TOGGLE PASSWORD VISIBILITY
-    function togglePassword() {
-        const pass = document.getElementById("password");
+   function togglePassword() {
+    const pass = document.getElementById("password");
+    const icon = document.getElementById("eyeIcon");
 
-        if (pass.type === "password") {
-            pass.type = "text";
-        } else {
-            pass.type = "password";
-        }
+    if (pass.type === "password") {
+        pass.type = "text";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+    } else {
+        pass.type = "password";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
     }
+}
     </script>
 </body>
 </html>
