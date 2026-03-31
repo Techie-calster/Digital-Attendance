@@ -148,6 +148,41 @@
         }
     </style>
 </head>
+<script>
+async function adminLogin() {
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    try {
+        const res = await fetch("http://127.0.0.1:5000/api/admin/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            alert("Login successful");
+            localStorage.setItem("admin", "true");
+
+            // redirect (change if your file name is different)
+            window.location.href = "./admin-dashboard.html";
+        } else {
+            alert(data.error || "Login failed");
+        }
+
+    } catch (err) {
+        alert("Server error");
+        console.error(err);
+    }
+}
+</script>
 <body>
 
     <div class="admin-card">
@@ -164,7 +199,7 @@
                 <label class="label">System Identity</label>
                 <div class="input-wrapper">
                     <i class="fa-solid fa-terminal icon"></i>
-                    <input type="text" class="admin-input" placeholder="root_user" required>
+                     <input type="text" id="username" class="admin-input" placeholder="root_user" required>
                 </div>
             </div>
 
@@ -172,11 +207,11 @@
                 <label class="label">Access Key</label>
                 <div class="input-wrapper">
                     <i class="fa-solid fa-key icon"></i>
-                    <input type="password" class="admin-input" placeholder="••••••••" required>
+                    <input type="password" id="password" class="admin-input" placeholder="••••••••" required>
                 </div>
             </div>
 
-            <button type="submit" class="btn-root">
+            <button type="button" class="btn-root" onclick="adminLogin()">
                 Initialize Login
             </button>
         </form>
