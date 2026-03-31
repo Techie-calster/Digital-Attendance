@@ -80,7 +80,7 @@ def login():
 def get_student(enrollment_no):
     try:
         result = supabase.table("students") \
-            .select("student_id, name, enrollment_no, roll_no") \
+            .select("student_id, name, enrollment_no, roll_no, year, branch") \
             .eq("enrollment_no", enrollment_no) \
             .maybe_single().execute()
 
