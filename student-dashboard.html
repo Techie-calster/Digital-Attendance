@@ -135,6 +135,7 @@
     </div>
 </div>
 <script>
+    const API_BASE = "http://localhost:5000";
     function logoutUser() {
     localStorage.clear();
 }
@@ -180,7 +181,7 @@ document.getElementById("skipText").innerText = "Loading...";
     let student;
 
 try {
-    const res = await fetch(`http://127.0.0.1:5000/api/student/${enrollment}`);
+    const res = await fetch(`${API_BASE}/api/student/${enrollment}`);
     student = await res.json();
 } catch (error) {
     alert("Server not reachable");
@@ -200,16 +201,16 @@ try {
         document.getElementById("enrollment").innerText = "EN: " + student.enrollment_no;
 document.getElementById("roll").innerText = "Roll: " + student.roll_no;
         // 2. Get attendance using student_id
-        const attRes = await fetch(`http://127.0.0.1:5000/api/attendance/${student.student_id}`);
+        const attRes = await fetch(`${API_BASE}/api/attendance/${student.student_id}`);
         const attendance = await attRes.json();
         // 🔥 LOAD SUBJECTS FROM DB
 
         //console.log("Attendance:", attendance);
         // 1. Fetch subjects
-        const subRes = await fetch(`http://127.0.0.1:5000/api/student-subjects/${student.student_id}`);
+       const subRes = await fetch(`${API_BASE}/api/student-subjects/${student.student_id}`);
 const subjects = await subRes.json() || [];
 
-const attRes2 = await fetch(`http://127.0.0.1:5000/api/subject-attendance/${student.student_id}`);
+const attRes2 = await fetch(`${API_BASE}/api/subject-attendance/${student.student_id}`);
 const attendanceMap = await attRes2.json() || {};
 
 const container = document.getElementById("subjectsContainer");
