@@ -36,11 +36,9 @@
         </nav>
 
         <div class="p-4 border-t">
-          <a href="login.html" onclick="logoutUser()" 
-   class="flex items-center gap-3 p-3 text-red-500 hover:bg-red-50 rounded-xl transition">
-    <i class="fa-solid fa-right-from-bracket"></i> 
-    Logout
-</a>
+            <a href="login.html" class="flex items-center gap-3 p-3 text-red-500 font-medium hover:bg-red-50 rounded-xl transition">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
         </div>
     </aside>
 
@@ -65,7 +63,7 @@
             <div class="flex gap-3">
                 <div class="text-right hidden sm:block">
                     <p class="text-xs font-bold text-slate-400 uppercase">Branch & Year</p>
-                    <p id="branchYear" class="text-sm font-semibold text-slate-700"></p>
+                    <p class="text-sm font-semibold text-slate-700">Computer Science | 3rd Year</p><!--  replace with actual student branch and year -->
                 </div>
                 <div class="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-xl flex items-center gap-2">
                     <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
@@ -85,7 +83,9 @@
                 <div class="mt-4 w-full bg-slate-100 h-2 rounded-full overflow-hidden">
                     <div id="progressBar" class="bg-blue-600 h-full" style="width: 0%"></div>
                 </div>
-                <p id="eligibilityText" class="mt-3 text-xs font-bold tracking-wide"></p>
+                <p class="mt-3 text-xs text-blue-600 font-bold tracking-wide">
+                    <i class="fa-solid fa-circle-info"></i> Currently Eligible
+                </p>
             </div>
 
             <!-- <div class="glass-card p-6 rounded-3xl shadow-sm border-l-4 border-amber-400">
@@ -112,8 +112,6 @@
 
         <h2 class="text-xl font-bold text-slate-900 mb-6">Subject Breakdown</h2>
         <div id="subjectsContainer" class="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-4 gap-2"></div>
-                
-                
     </main>
  <div id="subjectModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
     <div class="bg-white p-6 rounded-xl w-96 shadow-lg relative">
@@ -131,19 +129,19 @@
             class="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
             Close
         </button>
-
+        
+        <button onclick="closeModal()" 
+            class="absolute top-2 right-2 text-slate-400 hover:text-slate-600">
+            <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
     </div>
 </div>
 <script>
-    const API_BASE = "http://localhost:5000";
-    function logoutUser() {
-    localStorage.clear(); // clear all stored data
-    
-    // 🔥 force redirect properly
-    window.location.href = "login.html";
-}
+const API_BASE = window.location.protocol.startsWith('http')
+    ? `${window.location.protocol}//${window.location.hostname || '127.0.0.1'}:5000`
+    : 'http://127.0.0.1:5000';
 
-// MARKS (UPDATED LOGIC)
+     // MARKS (UPDATED LOGIC)
 function calculateMarks(percentage) {
     if (percentage < 67) return 0;
     else if (percentage < 70) return 1.2;
@@ -177,24 +175,10 @@ function closeModal() {
 
 async function loadStudentData() {
     const enrollment = localStorage.getItem("userId");
-    // 🔄 Loading state
-document.getElementById("studentName").innerText = "Loading...";
-document.getElementById("attendance").innerText = "--%";
-document.getElementById("skipText").innerText = "Loading...";
-    // 1. Get student info
-    let student;
 
-try {
+    // 1. Get student info
     const res = await fetch(`${API_BASE}/api/student/${enrollment}`);
-    student = await res.json();
-} catch (error) {
-    alert("Server not reachable");
-    return;
-}
-    if (!student || student.error) {
-    alert("Failed to load student data");
-    return;
-}
+    const student = await res.json();
     console.log("Student object:", student);
     console.log("Student:", student);
     console.log("Enrollment from localStorage:", enrollment);
@@ -202,16 +186,6 @@ try {
 
     if (student) {
         document.getElementById("studentName").innerText = student.name;
-        // ✅ Convert year number to text
-let yearText = "";
-if (student.year === 1) yearText = "1st Year";
-else if (student.year === 2) yearText = "2nd Year";
-else if (student.year === 3) yearText = "3rd Year";
-else if (student.year === 4) yearText = "4th Year";
-
-// ✅ Update UI dynamically
-document.getElementById("branchYear").innerText =
-    `${student.branch} | ${yearText}`;
         document.getElementById("enrollment").innerText = "EN: " + student.enrollment_no;
 document.getElementById("roll").innerText = "Roll: " + student.roll_no;
         // 2. Get attendance using student_id
@@ -221,7 +195,7 @@ document.getElementById("roll").innerText = "Roll: " + student.roll_no;
 
         //console.log("Attendance:", attendance);
         // 1. Fetch subjects
-       const subRes = await fetch(`${API_BASE}/api/student-subjects/${student.student_id}`);
+        const subRes = await fetch(`${API_BASE}/api/student-subjects/${student.student_id}`);
 const subjects = await subRes.json() || [];
 
 const attRes2 = await fetch(`${API_BASE}/api/subject-attendance/${student.student_id}`);
@@ -273,21 +247,6 @@ if (subjects.length === 0) {
        
 
 let marks = calculateMarks(att.percentage);
-// 🔥 SUBJECT-WISE ELIGIBILITY
-let eligibilityMsg = "";
-
-if (att.total === 0) {
-    eligibilityMsg = "No data";
-}
-else if (att.percentage >= 75) {
-    eligibilityMsg = "✅ Eligible";
-}
-else if (att.percentage >= 67) {
-    eligibilityMsg = "⚠️ At Risk";
-}
-else {
-    eligibilityMsg = "❌ Not Eligible";
-}
 
         // COLOR
         let color = "text-gray-400 bg-gray-100";
@@ -322,13 +281,6 @@ else {
     'text-emerald-600'
 }">
     ${skipMsg}
-</p>
-<p class="text-[11px] font-semibold ${
-    att.percentage < 67 ? 'text-red-500' :
-    att.percentage < 75 ? 'text-amber-500' :
-    'text-emerald-600'
-}">
-    ${eligibilityMsg}
 </p>
 
                <button onclick="viewDetails(
@@ -373,25 +325,6 @@ document.getElementById("progressBar").style.width =
 // Present / Total
 document.getElementById("present").innerText = total > 0 ? present : "--";
 document.getElementById("total").innerText = total > 0 ? total : "--";
-    // 🔥 ELIGIBILITY LOGIC (ADD HERE)
-const eligibilityText = document.getElementById("eligibilityText");
-
-if (total === 0) {
-    eligibilityText.innerText = "No attendance data available";
-    eligibilityText.className = "mt-3 text-xs font-bold text-gray-400";
-}
-else if (percentage >= 75) {
-    eligibilityText.innerText = "✅ Eligible for Exams (Safe Zone)";
-    eligibilityText.className = "mt-3 text-xs font-bold text-emerald-600";
-}
-else if (percentage >= 67) {
-    eligibilityText.innerText = "⚠️ Eligible but At Risk (Maintain attendance)";
-    eligibilityText.className = "mt-3 text-xs font-bold text-amber-500";
-}
-else {
-    eligibilityText.innerText = "❌ Not Eligible for Exams (Below 67%)";
-    eligibilityText.className = "mt-3 text-xs font-bold text-red-600";
-}
 // 🔥 SKIP LOGIC
 const skip = calculateSkip(present, total);
 

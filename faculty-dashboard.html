@@ -1,444 +1,632 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Faculty Portal | Digital Attendance</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #f1f5f9; }
-        .sidebar-active { background: #2563eb; color: white; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
-        .stat-card { transition: transform 0.2s; }
-        .stat-card:hover { transform: translateY(-5px); }
-    </style>
-</head>
-<body class="flex min-h-screen">
-
-    <aside class="w-64 bg-slate-900 text-slate-400 hidden lg:flex flex-col">
-        <div class="p-6 flex items-center gap-3 text-white">
-            <div class="bg-blue-600 p-2 rounded-lg">
-                <i class="fa-solid fa-chalkboard-user"></i>
-            </div>
-            <span class="text-xl font-bold tracking-tight">Faculty<span class="text-blue-400">Hub</span></span>
-        </div>
-        
-        <nav class="flex-1 px-4 space-y-2 mt-4">
-            <a href="#" class="sidebar-active flex items-center gap-3 p-3 rounded-xl font-medium">
-                <i class="fa-solid fa-gauge-high"></i> Dashboard
-            </a>
-            <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-800 transition">
-                <i class="fa-solid fa-users"></i> My Students
-            </a>
-            <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-800 transition">
-                <i class="fa-solid fa-file-export"></i> Reports
-            </a>
-        </nav>
-
-        <div class="p-4 border-t border-slate-800">
-            <a href="login.html" class="flex items-center gap-3 p-3 text-red-400 font-medium hover:bg-red-500/10 rounded-xl transition">
-                <i class="fa-solid fa-power-off"></i> Logout
-            </a>
-        </div>
-    </aside>
-
-    <main class="flex-1 p-4 lg:p-8 overflow-y-auto">
-        
-        <div id="dashboardView">
-            <header class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-                <div class="flex items-center gap-6">
-                    <div class="w-20 h-20 rounded-full border-4 border-white shadow-lg overflow-hidden bg-blue-100">
-                        <img id="facultyAvatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Professor" alt="Faculty Photo">
-                    </div>
-                    <div>
-                        <h1 id="facultyName" class="text-2xl font-bold text-slate-900">Loading...</h1>
-                        <p id="facultyDept" class="text-blue-600 font-semibold text-sm">Loading...</p>
-                        <div class="flex gap-4 mt-1 text-xs text-slate-500">
-                            <span><i class="fa-solid fa-id-badge mr-1"></i> Faculty ID: <span id="facultyId">Loading...</span></span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="flex flex-col items-end gap-2">
-                    <button onclick="toggleModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-200 transition">
-                        <i class="fa-solid fa-plus mr-2"></i> Mark Today's Attendance
-                    </button>
-                </div>
-            </header>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                <div class="stat-card bg-white p-6 rounded-3xl shadow-sm border border-slate-100 cursor-pointer" onclick="showZoneStudents('subjects')">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="p-3 bg-blue-50 text-blue-600 rounded-2xl">
-                            <i class="fa-solid fa-book-open text-xl"></i>
-                        </div>
-                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Active Subjects</span>
-                    </div>
-                    <h3 id="activeSubjects" class="text-3xl font-black text-slate-900">--</h3>
-                    <p class="text-slate-500 text-xs mt-1">&nbsp;</p>
-                </div>
-                <div class="stat-card bg-white p-6 rounded-3xl shadow-sm border border-slate-100 cursor-pointer" onclick="showZoneStudents('danger')">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="p-3 bg-red-50 text-red-600 rounded-2xl">
-                            <i class="fa-solid fa-user-slash text-xl"></i>
-                        </div>
-                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Danger Zone</span>
-                    </div>
-                    <h3 id="dangerZone" class="text-3xl font-black text-slate-900 text-red-600">--</h3>
-                    <p class="text-slate-500 text-xs mt-1">&nbsp;</p>
-                </div>
-                <div class="stat-card bg-white p-6 rounded-3xl shadow-sm border border-slate-100 cursor-pointer" onclick="showZoneStudents('top')">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="p-3 bg-emerald-50 text-emerald-600 rounded-2xl">
-                            <i class="fa-solid fa-award text-xl"></i>
-                        </div>
-                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Top Tier</span>
-                    </div>
-                    <h3 id="topTier" class="text-3xl font-black text-slate-900 text-emerald-600">--</h3>
-                    <p class="text-slate-500 text-xs mt-1">&nbsp;</p>
-                </div>
-            </div>
-        <!-- Zone Students Result Section -->
-        <section id="zoneResultSection" class="hidden mt-10 bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                <div>
-                    <h2 id="zoneResultTitle" class="text-xl font-bold text-slate-900 uppercase tracking-tight">Zone Students</h2>
-                </div>
-                <button onclick="hideZoneResult()" class="text-slate-400 hover:text-blue-600 transition text-sm font-bold">
-                    <i class="fa-solid fa-arrow-left mr-1"></i> Back to Dashboard
-                </button>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-slate-50/50">
-                            <th class="p-4 text-xs font-black text-slate-400 uppercase tracking-widest">Roll No</th>
-                            <th class="p-4 text-xs font-black text-slate-400 uppercase tracking-widest">Student Name</th>
-                            <th class="p-4 text-xs font-black text-slate-400 uppercase tracking-widest text-center">Current %</th>
-                        </tr>
-                    </thead>
-                    <tbody id="zoneResultTableBody"></tbody>
-                </table>
-                <div id="zoneResultEmpty" class="p-6 text-center text-slate-400 text-sm hidden">No students found</div>
-            </div>
-        </section>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="subjectsContainer"></div>
-        </div>
-
-        <section id="spreadsheetSection" class="hidden mt-10 bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                <div>
-                    <h2 id="sheetTitle" class="text-xl font-bold text-slate-900 uppercase tracking-tight">Attendance Sheet</h2>
-                    <p class="text-xs text-slate-500 font-medium">Mark presence for today's session</p>
-                </div>
-                <button onclick="location.reload()" class="text-slate-400 hover:text-blue-600 transition text-sm font-bold">
-                    <i class="fa-solid fa-arrow-left mr-1"></i> Back to Dashboard
-                </button>
-            </div>
-            
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-slate-50/50">
-                            <th class="p-4 text-xs font-black text-slate-400 uppercase tracking-widest">Roll No</th>
-                            <th class="p-4 text-xs font-black text-slate-400 uppercase tracking-widest">Student Name</th>
-                            <th class="p-4 text-xs font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
-                            <th class="p-4 text-xs font-black text-slate-400 uppercase tracking-widest text-center">Current %</th>
-                        </tr>
-                    </thead>
-                    <tbody id="attendanceTableBody"></tbody>
-                </table>
-            </div>
-
-            <div class="p-6 bg-slate-50 border-t border-slate-100 flex justify-end">
-                <button onclick="submitAttendance()" 
-class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-bold shadow-lg transition">
-                    Submit Attendance
-                </button>
-            </div>
-        </section>
-    </main>
-
-    <script>
-    // Dynamic API base URL - works on localhost, LAN, and deployment
-    const BASE_URL = window.location.protocol + '//' + window.location.hostname + ':5000';
-    
-    function toggleModal() {
-        document.getElementById('filterModal').classList.toggle('hidden');
-    }
-
-    let selectedSubject = null;
-
-    async function loadFacultyData() {
-        const employeeId = localStorage.getItem("userId");
-        try {
-            const res = await fetch(`${BASE_URL}/api/faculty/${employeeId}`);
-            const result = await res.json();
-            const faculty = result.data;
-            document.getElementById('facultyName').innerText = faculty.name;
-            document.getElementById('facultyDept').innerText = `Dept. of ${faculty.department}`;
-            document.getElementById('facultyId').innerText = faculty.employee_id;
-            document.getElementById('facultyAvatar').src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${faculty.name}`;
-
-            // Fetch dashboard statistics from backend
-            const statsRes = await fetch(`${BASE_URL}/api/faculty-stats/${employeeId}`);
-            const statsResult = await statsRes.json();
-            console.log("STATS:", statsResult);
-            const stats = statsResult.data ?? { active_subjects: 0, students_below_67: 0, students_above_88: 0 };
-
-            document.getElementById('activeSubjects').innerText = stats.active_subjects ?? 0;
-            document.getElementById('dangerZone').innerText = stats.students_below_67 ?? 0;
-            document.getElementById('topTier').innerText = stats.students_above_88 ?? 0;
-        } catch (error) {
-            console.error("Error loading faculty data:", error);
-            document.getElementById('activeSubjects').innerText = 0;
-            document.getElementById('dangerZone').innerText = 0;
-            document.getElementById('topTier').innerText = 0;
-        }
-    }
-
-    async function loadSubjects() {
-        const employeeId = localStorage.getItem("userId");
-        try {
-            const res = await fetch(`${BASE_URL}/api/faculty-subjects/${employeeId}`);
-            const result = await res.json();
-            const subjects = result.data || [];
-            const container = document.getElementById('subjectsContainer');
-            container.innerHTML = "";
-            // Removed: document.getElementById('activeSubjects').innerText = subjects.length;
-            subjects.forEach(sub => {
-                container.innerHTML += `
-                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col md:flex-row gap-6">
-                    <div class="md:w-1/3 bg-slate-100 rounded-2xl flex items-center justify-center">
-                        <i class="fa-solid fa-network-wired text-5xl text-slate-300"></i>
-                    </div>
-                    <div class="md:w-2/3 space-y-4">
-                        <div>
-                            <h3 class="text-xl font-bold text-slate-800 mt-2">${sub.subject_name}</h3>
-                            <p class="text-sm text-slate-500">Subject ID: ${sub.subject_id}</p>
-                        </div>
-                        <div class="flex justify-end items-center pt-2">
-                            <button onclick="openSheet(${sub.subject_id}, '${sub.subject_name}')" class="bg-slate-900 text-white text-xs px-4 py-2 rounded-lg hover:bg-blue-600 transition font-bold">Manage Class</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            });
-        } catch (error) {
-            console.error("Error loading subjects:", error);
-        }
-    }
-
-    async function renderTableRows(subjectId, branch, year, section) {
-        selectedSubject = subjectId;
-        try {
-            const res = await fetch(`${BASE_URL}/api/subject-students/${subjectId}/${branch}/${year}/${section}`)
-            const result = await res.json();
-            const students = result.data;
-            const tbody = document.getElementById('attendanceTableBody');
-            tbody.innerHTML = students.map(s => {
-                let color = "text-green-600";
-                if (s.percentage < 67) color = "text-red-600";
-                else if (s.percentage < 85) color = "text-yellow-600";
-                return `
-                    <tr class="border-b border-slate-100 hover:bg-slate-50">
-                        <td class="p-4">${s.roll_no}</td>
-                        <td class="p-4">${s.name}</td>
-                        <td class="text-center p-4">
-                            <input type="checkbox" data-id="${s.student_id}" checked>
-                        </td>
-                        <td class="p-4 text-center font-bold ${color}">
-                            ${typeof s.percentage === 'number' ? s.percentage + '%' : '--'}
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        } catch (error) {
-            console.error("Error rendering table rows:", error);
-        }
-    }
-
-    async function submitAttendance() {
-        const checkboxes = document.querySelectorAll("input[type='checkbox']");
-
-        const data = [];
-
-        checkboxes.forEach(cb => {
-            data.push({
-                student_id: cb.dataset.id,
-                subject_id: selectedSubject,
-                date: new Date().toISOString().split('T')[0],
-                status: cb.checked ? "Present" : "Absent"
-            });
-        });
-
-        try {
-            const res = await fetch(`${BASE_URL}/api/mark-attendance`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
-            });
-
-            const result = await res.json();
-
-            if (result.status === "success") {
-                alert("Attendance saved successfully");
-                location.reload();
-            }
-        } catch (error) {
-            console.error("Error submitting attendance:", error);
-        }
-    }
-    
-
-    function openSheet(subjectId, subjectName) {
-        selectedSubject = subjectId;
-        // Only open the filter modal, do not load fake data
-        toggleModal();
-    }
-
-    window.onload = function() {
-        loadFacultyData();
-        loadSubjects();
-    };
-    function generateSheet() {
-
-    const branch = document.getElementById('branchSel').value;
-    const year = document.getElementById('yearSel').value;
-    const section = document.getElementById('secSel').value;
-
-    if (!branch || !year || !section) {
-        alert("Please select all fields");
-        return;
-    }
-
-    document.getElementById('dashboardView').classList.add('hidden');
-    document.getElementById('spreadsheetSection').classList.remove('hidden');
-    document.getElementById('filterModal').classList.add('hidden');
-
-    document.getElementById('sheetTitle').innerText =
-        `${branch} - ${year} (${section})`;
-
-    // 👇 CALL UPDATED FUNCTION
-    renderTableRows(selectedSubject, branch, year, section);
-}
-
-    function showZoneStudents(zone) {
-        const employeeId = localStorage.getItem("userId");
-        console.log("[ZONE] Button clicked - zone:", zone, "employeeId:", employeeId);
-        
-        let title = "";
-        if (zone === "danger") title = "Danger Zone Students";
-        else if (zone === "top") title = "Top Tier Students";
-        else title = "Active Subjects";
-
-        document.getElementById('zoneResultTitle').innerText = title;
-        document.getElementById('dashboardView').classList.add('hidden');
-        document.getElementById('spreadsheetSection').classList.add('hidden');
-        document.getElementById('zoneResultSection').classList.remove('hidden');
-        console.log("[ZONE] UI sections updated");
-
-        if (zone === "danger" || zone === "top") {
-            const url = `${BASE_URL}/api/faculty-zone-students/${employeeId}/${zone}`;
-            console.log("[ZONE] Fetching from:", url);
-            
-            fetch(url)
-                .then(res => {
-                    console.log("[ZONE] Response status:", res.status);
-                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                    return res.json();
-                })
-                .then(result => {
-                    console.log("[ZONE] API Response:", result);
-                    const students = result.data || [];
-                    console.log("[ZONE] Students count:", students.length);
-                    const tbody = document.getElementById('zoneResultTableBody');
-                    const emptyMsg = document.getElementById('zoneResultEmpty');
-                    
-                    if (students.length === 0) {
-                        console.log("[ZONE] No students found, showing empty message");
-                        tbody.innerHTML = "";
-                        emptyMsg.classList.remove('hidden');
-                    } else {
-                        console.log("[ZONE] Rendering", students.length, "students");
-                        emptyMsg.classList.add('hidden');
-                        const html = students.map(s => {
-                            console.log("[ZONE] Student:", s.roll_no, s.name, s.percentage);
-                            return `
-                            <tr class="border-b border-slate-100 hover:bg-slate-50">
-                                <td class="p-4">${s.roll_no}</td>
-                                <td class="p-4">${s.name}</td>
-                                <td class="p-4 text-center font-bold">${typeof s.percentage === 'number' ? s.percentage + '%' : '--'}</td>
-                            </tr>
-                        `;
-                        }).join('');
-                        console.log("[ZONE] HTML to render:", html.substring(0, 100));
-                        tbody.innerHTML = html;
-                    }
-                })
-                .catch(error => {
-                    console.error("[ZONE] Fetch error:", error);
-                    document.getElementById('zoneResultTableBody').innerHTML = "";
-                    document.getElementById('zoneResultEmpty').innerText = "Error: " + error.message;
-                    document.getElementById('zoneResultEmpty').classList.remove('hidden');
-                });
-        } else {
-            document.getElementById('zoneResultSection').classList.add('hidden');
-            document.getElementById('dashboardView').classList.remove('hidden');
-        }
-    }
-
-    function hideZoneResult() {
-        document.getElementById('zoneResultSection').classList.add('hidden');
-        document.getElementById('dashboardView').classList.remove('hidden');
-    }
-    </script>
-<div id="filterModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
-    <div class="p-8">
-      <h3 class="text-xl font-bold text-slate-900 mb-6">Select Class Details</h3>
-
-      <div class="space-y-4">
-        <div>
-          <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Branch</label>
-          <select id="branchSel" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl">
-            <option value="">Select</option>
-            <option value="CSE">CSE</option>
-            <option value="IT">IT</option>
-            <option value="ECE">ECE</option>
-            <option value="EEE">EEE</option>
-          </select>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Year</label>
-            <select id="yearSel" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl">
-              <option value="">Select</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-            </select>
-          </div>
-          <div>
-            <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Section</label>
-            <select id="secSel" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl">
-              <option value="">Select</option>
-              <option value="A">A</option>
-              <option value="B">B</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <button onclick="generateSheet()" class="w-full mt-8 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl">
-        Open Attendance Sheet
-      </button>
-    </div>
-  </div>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Faculty Dashboard | RAMS</title>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+		<style>
+			body {
+				font-family: Poppins, sans-serif;
+				background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 52%, #f8fafc 100%);
+			}
+			.card {
+				background: rgba(255, 255, 255, 0.9);
+				backdrop-filter: blur(10px);
+				border: 1px solid rgba(148, 163, 184, 0.15);
+			}
+			.zone.active {
+				background: #0f172a;
+				color: #fff;
+				border-color: #0f172a;
+			}
+			.history-card.active {
+				border-color: #0f172a;
+				background: #0f172a;
+				color: #fff;
+				box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
+			}
+		</style>
+	</head>
+	<body class="text-slate-900">
+<div class='mx-auto max-w-7xl p-4 lg:p-8 space-y-6'>
+<div id='dashboardView' class='space-y-6'>
+<header class='card rounded-[2rem] p-6 shadow-xl shadow-slate-200/60'>
+<div class='flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between'>
+<div class='flex items-start gap-5'>
+<div class='h-20 w-20 overflow-hidden rounded-[1.75rem] border-4 border-white bg-slate-100 shadow-lg'><img id='facultyAvatar' class='h-full w-full object-cover' src='https://api.dicebear.com/7.x/avataaars/svg?seed=Faculty' alt='Faculty avatar'></div>
+<div>
+<p class='text-xs font-bold uppercase tracking-[0.35em] text-slate-400'>Faculty Dashboard</p>
+<h1 id='facultyName' class='mt-2 text-3xl font-extrabold'>Loading faculty profile...</h1>
+<p id='facultyDept' class='mt-1 text-sm font-semibold text-teal-700'>Checking department and assignments</p>
+<div class='mt-3 flex flex-wrap gap-3 text-sm text-slate-500'>
+<span class='rounded-full bg-white px-3 py-1 shadow-sm'><i class='fa-solid fa-id-badge mr-2 text-slate-400'></i><span id='facultyId'>-</span></span>
+<span class='rounded-full bg-white px-3 py-1 shadow-sm'><i class='fa-solid fa-calendar-day mr-2 text-slate-400'></i><span id='todayLabel'>Today</span></span>
 </div>
+</div>
+</div>
+<div class='flex flex-wrap gap-3'>
+<button type='button' onclick='startMarkingFlow()' class='rounded-2xl bg-slate-900 px-5 py-3 text-sm font-bold text-white'>Start Attendance</button>
+<button type='button' onclick='refreshDashboard(true)' class='rounded-2xl bg-white px-5 py-3 text-sm font-bold text-slate-700 shadow'>Refresh Data</button>
+<a href='login.html' onclick='logoutUser(event)' class='rounded-2xl bg-red-50 px-5 py-3 text-sm font-bold text-red-600'>Logout</a>
+</div>
+</div>
+<div id='dashboardBanner' class='mt-5 hidden rounded-2xl border px-4 py-3 text-sm font-medium'></div>
+</header>
+<section class='grid gap-4 md:grid-cols-2 xl:grid-cols-4'>
+<div class='card rounded-[1.7rem] p-5 shadow-sm'><p class='text-xs font-black uppercase tracking-[0.28em] text-slate-400'>Subjects</p><p id='activeSubjects' class='mt-3 text-4xl font-black'>0</p><p class='mt-2 text-sm text-slate-500'>Assigned subjects</p></div>
+<div class='card rounded-[1.7rem] p-5 shadow-sm'><p class='text-xs font-black uppercase tracking-[0.28em] text-slate-400'>Tracked</p><p id='trackedStudents' class='mt-3 text-4xl font-black'>0</p><p class='mt-2 text-sm text-slate-500'>Students across your subjects</p></div>
+<div class='card rounded-[1.7rem] p-5 shadow-sm'><p class='text-xs font-black uppercase tracking-[0.28em] text-red-400'>Below 67%</p><p id='dangerCount' class='mt-3 text-4xl font-black text-red-600'>0</p><p class='mt-2 text-sm text-slate-500'>Shortage cases</p></div>
+<div class='card rounded-[1.7rem] p-5 shadow-sm'><p class='text-xs font-black uppercase tracking-[0.28em] text-emerald-400'>85% +</p><p id='strongCount' class='mt-3 text-4xl font-black text-emerald-600'>0</p><p class='mt-2 text-sm text-slate-500'>High attendance band</p></div>
+</section>
+<section class='grid gap-6 xl:grid-cols-[2fr,1fr]'>
+<div class='card rounded-[2rem] p-6 shadow-sm'>
+<div class='flex flex-col gap-3 md:flex-row md:items-center md:justify-between'><div><p class='text-xs font-bold uppercase tracking-[0.35em] text-slate-400'>Assigned Subjects</p><h2 class='mt-2 text-2xl font-extrabold'>Attendance workspace</h2><p class='mt-2 text-sm text-slate-500'>Select a subject, choose the cohort and date, then load the attendance sheet.</p></div></div>
+<div id='subjectsContainer' class='mt-6 grid gap-4 xl:grid-cols-2'><div class='rounded-[1.5rem] border border-dashed border-slate-300 bg-white px-5 py-8 text-center text-sm text-slate-400'>Loading subject assignments...</div></div>
+</div>
+<div class='card rounded-[2rem] p-6 shadow-sm'>
+<p class='text-xs font-bold uppercase tracking-[0.35em] text-slate-400'>Attendance Bands</p>
+<h2 class='mt-2 text-2xl font-extrabold'>Eligibility overview</h2>
+<div class='mt-5 space-y-3 text-sm'>
+<div class='rounded-2xl bg-red-50 px-4 py-4 text-red-700'><strong>67%</strong> minimum eligibility threshold</div>
+<div class='rounded-2xl bg-amber-50 px-4 py-4 text-amber-700'><strong>75%</strong> watch band for borderline students</div>
+<div class='rounded-2xl bg-emerald-50 px-4 py-4 text-emerald-700'><strong>85%</strong> strong attendance band</div>
+</div>
+<div class='mt-5 rounded-[1.5rem] bg-slate-900 p-5 text-white'><p class='text-xs font-bold uppercase tracking-[0.35em] text-slate-400'>Average Attendance</p><p id='averageAttendance' class='mt-3 text-4xl font-black'>0%</p></div>
+</div>
+</section>
+<section class='card rounded-[2rem] p-6 shadow-sm'>
+<div class='flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between'>
+<div><p class='text-xs font-bold uppercase tracking-[0.35em] text-slate-400'>Student Review</p><h2 class='mt-2 text-2xl font-extrabold'>Action queue</h2><p class='mt-2 text-sm text-slate-500'>Review shortage, watch, and high-attendance groups from one place.</p></div>
+<div class='flex flex-wrap gap-2'><button class='zone rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600' data-zone='danger'>Below 67%</button><button class='zone rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600' data-zone='watch'>67% to 75%</button><button class='zone rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600' data-zone='high'>85% and above</button></div>
+</div>
+<div id='insightBanner' class='mt-5 hidden rounded-2xl border px-4 py-3 text-sm font-medium'></div>
+<div class='mt-6 overflow-x-auto rounded-[1.5rem] border border-slate-200 bg-white'>
+<table class='min-w-full border-collapse text-left'><thead class='bg-slate-50'><tr><th class='px-5 py-4 text-xs font-black uppercase tracking-[0.25em] text-slate-400'>Student</th><th class='px-5 py-4 text-xs font-black uppercase tracking-[0.25em] text-slate-400'>Roll</th><th class='px-5 py-4 text-xs font-black uppercase tracking-[0.25em] text-slate-400 text-center'>Current %</th><th class='px-5 py-4 text-xs font-black uppercase tracking-[0.25em] text-slate-400 text-center'>Eligibility</th><th class='px-5 py-4 text-xs font-black uppercase tracking-[0.25em] text-slate-400 text-center'>Need for 67%</th><th class='px-5 py-4 text-xs font-black uppercase tracking-[0.25em] text-slate-400'>Subjects</th></tr></thead><tbody id='insightTableBody'></tbody></table>
+<div id='insightEmpty' class='hidden px-6 py-10 text-center text-sm text-slate-400'>No students found in this band.</div>
+</div>
+</section>
+</div>
+<section id='sheetSection' class='hidden'>
+<div class='card overflow-hidden rounded-[2rem] shadow-sm'>
+<div class='border-b border-slate-200 px-6 py-5'><div class='flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between'><div><p class='text-xs font-bold uppercase tracking-[0.35em] text-slate-400'>Attendance Workspace</p><h2 id='sheetTitle' class='mt-2 text-2xl font-extrabold'>Attendance sheet</h2><p id='sheetSubtitle' class='mt-2 text-sm text-slate-500'>Select a subject and cohort to begin.</p></div><div class='flex flex-wrap gap-3'><button type='button' onclick='openCurrentSelection()' class='rounded-2xl bg-white px-4 py-3 text-sm font-bold text-slate-700 shadow'>Change Date / Cohort</button><button type='button' onclick='backToDashboard()' class='rounded-2xl bg-slate-900 px-4 py-3 text-sm font-bold text-white'>Back to dashboard</button></div></div></div>
+<div class='space-y-6 p-6'>
+<div class='grid gap-5 xl:grid-cols-[1.4fr,1fr]'>
+<div class='rounded-[1.6rem] bg-slate-900 p-6 text-white'><div class='grid gap-4 md:grid-cols-4'><div><p class='text-xs font-semibold uppercase tracking-[0.25em] text-slate-400'>Students</p><p id='sheetStudentCount' class='mt-2 text-3xl font-black'>0</p></div><div><p class='text-xs font-semibold uppercase tracking-[0.25em] text-slate-400'>Projected Average</p><p id='sheetAverage' class='mt-2 text-3xl font-black'>0%</p></div><div><p class='text-xs font-semibold uppercase tracking-[0.25em] text-slate-400'>Shortage</p><p id='sheetShortage' class='mt-2 text-3xl font-black'>0</p></div><div><p class='text-xs font-semibold uppercase tracking-[0.25em] text-slate-400'>Recorded</p><p id='sheetRecordedCount' class='mt-2 text-3xl font-black'>0/0</p></div></div><div class='mt-5 rounded-[1.3rem] bg-white/10 px-4 py-3 text-sm font-medium text-slate-100'><span id='sheetSelectionSummary'>Present selected: 0 | Absent selected: 0</span></div></div>
+<div class='rounded-[1.6rem] border border-slate-200 bg-slate-50 p-6 text-sm text-slate-600'><p><strong>Session date:</strong> <span id='sheetDateValue'>-</span></p><p class='mt-3'><strong>Session status:</strong> <span id='sheetSessionMode'>Choose a date to start marking.</span></p><p class='mt-3'><strong>Previous attendance:</strong> counts are shown before the selected class is applied.</p><p class='mt-3'><strong>Current percentage:</strong> values update live as you mark Present or Absent.</p><div id='sheetBanner' class='mt-5 hidden rounded-2xl border px-4 py-3 text-sm font-medium'></div></div>
+</div>
+<div class='grid gap-6 xl:grid-cols-[1.9fr,1fr]'>
+<div class='overflow-x-auto rounded-[1.6rem] border border-slate-200 bg-white'>
+<table class='min-w-full border-collapse text-left'><thead class='bg-slate-50'><tr><th class='px-5 py-4 text-xs font-black uppercase tracking-[0.25em] text-slate-400'>Roll</th><th class='px-5 py-4 text-xs font-black uppercase tracking-[0.25em] text-slate-400'>Student</th><th class='px-5 py-4 text-xs font-black uppercase tracking-[0.25em] text-slate-400 text-center'>Previous</th><th class='px-5 py-4 text-xs font-black uppercase tracking-[0.25em] text-slate-400 text-center'>Current %</th><th class='px-5 py-4 text-xs font-black uppercase tracking-[0.25em] text-slate-400 text-center'>Eligibility</th><th class='px-5 py-4 text-xs font-black uppercase tracking-[0.25em] text-slate-400 text-center'>Need 67 / 75 / 85</th><th class='px-5 py-4 text-xs font-black uppercase tracking-[0.25em] text-slate-400 text-center'>Mark Today</th></tr></thead><tbody id='sheetTableBody'></tbody></table>
+<div id='sheetEmpty' class='hidden px-6 py-10 text-center text-sm text-slate-400'>No students were found for the selected subject and cohort.</div>
+</div>
+<aside class='rounded-[1.6rem] border border-slate-200 bg-white p-5'><div class='flex items-start justify-between gap-4'><div><p class='text-xs font-bold uppercase tracking-[0.32em] text-slate-400'>Recorded Sessions</p><h3 class='mt-2 text-xl font-extrabold text-slate-900'>History</h3><p class='mt-2 text-sm text-slate-500'>Open any saved date to review or update the attendance.</p></div><button type='button' onclick='loadSessionHistory(true)' class='rounded-2xl bg-slate-100 px-3 py-2 text-xs font-bold uppercase tracking-[0.18em] text-slate-700'>Refresh</button></div><div id='historyBanner' class='mt-5 hidden rounded-2xl border px-4 py-3 text-sm font-medium'></div><div id='historyList' class='mt-5 space-y-3'><div class='rounded-[1.3rem] border border-dashed border-slate-200 px-4 py-6 text-center text-sm text-slate-400'>Session history will appear here after you load a cohort.</div></div></aside>
+</div>
+<div class='flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between'><div id='sheetFooterHint' class='rounded-[1.3rem] bg-slate-100 px-4 py-3 text-sm font-medium text-slate-600'>Choose a date and cohort to begin.</div><button id='sheetSubmitButton' type='button' onclick='submitAttendanceSheet()' class='rounded-2xl bg-teal-700 px-6 py-4 text-sm font-bold text-white disabled:cursor-not-allowed disabled:bg-slate-300'>Save Attendance</button></div>
+</div>
+</div>
+</section>
+</div>
+<div id='setupModal' class='fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 px-4 py-6 backdrop-blur-sm'><div class='card w-full max-w-lg rounded-[2rem] p-6 shadow-xl'><div class='flex items-start justify-between gap-4'><div><p class='text-xs font-bold uppercase tracking-[0.35em] text-slate-400'>Attendance Setup</p><h3 id='setupSubjectName' class='mt-2 text-2xl font-extrabold'>Select a cohort</h3><p class='mt-2 text-sm text-slate-500'>Choose the exact class section before loading the structured sheet.</p></div><button type='button' onclick='closeSetupModal()' class='rounded-2xl bg-white px-3 py-2 text-slate-500 shadow'><i class='fa-solid fa-xmark'></i></button></div><div class='mt-6 space-y-5'><div><label for='cohortSelect' class='text-xs font-bold uppercase tracking-[0.3em] text-slate-400'>Mapped Cohort</label><select id='cohortSelect' class='mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700'><option value=''>Select cohort</option></select></div><div><label for='sessionDateInput' class='text-xs font-bold uppercase tracking-[0.3em] text-slate-400'>Session Date</label><input id='sessionDateInput' type='date' class='mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700'></div></div><div id='setupBanner' class='mt-5 hidden rounded-2xl border px-4 py-3 text-sm font-medium'></div><div class='mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end'><button type='button' onclick='closeSetupModal()' class='rounded-2xl bg-white px-5 py-3 text-sm font-bold text-slate-700 shadow'>Cancel</button><button type='button' onclick='startAttendanceSheet()' class='rounded-2xl bg-slate-900 px-5 py-3 text-sm font-bold text-white'>Load Attendance Sheet</button></div></div></div>
+<script>
+	const API = location.protocol.startsWith("http")
+		? location.protocol + "//" + (location.hostname || "127.0.0.1") + ":5000"
+		: "http://127.0.0.1:5000";
+	const THRESHOLDS = { eligible: 67, warning: 75, high: 85 };
+	const state = {
+		role: localStorage.getItem("role") || "",
+		employeeId: localStorage.getItem("userId") || "",
+		activeZone: "danger",
+		subjects: [],
+		map: {},
+		selectedSubject: null,
+		currentContext: null,
+		currentSheet: null,
+		sessionHistory: [],
+	};
+	const el = {
+		dashboardView: document.getElementById("dashboardView"),
+		dashboardBanner: document.getElementById("dashboardBanner"),
+		facultyName: document.getElementById("facultyName"),
+		facultyDept: document.getElementById("facultyDept"),
+		facultyId: document.getElementById("facultyId"),
+		facultyAvatar: document.getElementById("facultyAvatar"),
+		todayLabel: document.getElementById("todayLabel"),
+		activeSubjects: document.getElementById("activeSubjects"),
+		trackedStudents: document.getElementById("trackedStudents"),
+		dangerCount: document.getElementById("dangerCount"),
+		strongCount: document.getElementById("strongCount"),
+		averageAttendance: document.getElementById("averageAttendance"),
+		subjectsContainer: document.getElementById("subjectsContainer"),
+		insightBanner: document.getElementById("insightBanner"),
+		insightTableBody: document.getElementById("insightTableBody"),
+		insightEmpty: document.getElementById("insightEmpty"),
+		sheetSection: document.getElementById("sheetSection"),
+		sheetTitle: document.getElementById("sheetTitle"),
+		sheetSubtitle: document.getElementById("sheetSubtitle"),
+		sheetStudentCount: document.getElementById("sheetStudentCount"),
+		sheetAverage: document.getElementById("sheetAverage"),
+		sheetShortage: document.getElementById("sheetShortage"),
+		sheetRecordedCount: document.getElementById("sheetRecordedCount"),
+		sheetDateValue: document.getElementById("sheetDateValue"),
+		sheetSessionMode: document.getElementById("sheetSessionMode"),
+		sheetBanner: document.getElementById("sheetBanner"),
+		sheetTableBody: document.getElementById("sheetTableBody"),
+		sheetEmpty: document.getElementById("sheetEmpty"),
+		sheetSelectionSummary: document.getElementById("sheetSelectionSummary"),
+		sheetFooterHint: document.getElementById("sheetFooterHint"),
+		sheetSubmitButton: document.getElementById("sheetSubmitButton"),
+		historyBanner: document.getElementById("historyBanner"),
+		historyList: document.getElementById("historyList"),
+		setupModal: document.getElementById("setupModal"),
+		setupSubjectName: document.getElementById("setupSubjectName"),
+		cohortSelect: document.getElementById("cohortSelect"),
+		sessionDateInput: document.getElementById("sessionDateInput"),
+		setupBanner: document.getElementById("setupBanner"),
+	};
+	const esc = (value) =>
+		String(value ?? "").replace(/[&<>"']/g, (character) =>
+			({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]
+		);
+	const pct = (value) => {
+		const numeric = Number(value);
+		if (!Number.isFinite(numeric)) return "--";
+		const rounded = Math.round(numeric * 10) / 10;
+		return `${Number.isInteger(rounded) ? rounded.toFixed(0) : rounded.toFixed(1)}%`;
+	};
+	const fmtDate = (value) => {
+		if (!value) return "No sessions yet";
+		const parsed = new Date(`${value}T00:00:00`);
+		return Number.isNaN(parsed.getTime())
+			? value
+			: parsed.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+	};
+	const badge = (zone) =>
+		zone === "danger"
+			? "bg-red-50 text-red-700"
+			: zone === "watch"
+			? "bg-amber-50 text-amber-700"
+			: zone === "high"
+			? "bg-emerald-50 text-emerald-700"
+			: "bg-slate-100 text-slate-700";
+	function tone(type) {
+		return type === "success"
+			? "border-emerald-200 bg-emerald-50 text-emerald-700"
+			: type === "warn"
+			? "border-amber-200 bg-amber-50 text-amber-700"
+			: type === "error"
+			? "border-red-200 bg-red-50 text-red-700"
+			: "border-blue-200 bg-blue-50 text-blue-700";
+	}
+	function banner(target, message, type = "info") {
+		const node = typeof target === "string" ? document.getElementById(target) : target;
+		if (!node) return;
+		if (!message) {
+			node.className = "hidden";
+			node.textContent = "";
+			return;
+		}
+		node.className = `rounded-2xl border px-4 py-3 text-sm font-medium ${tone(type)}`;
+		node.textContent = message;
+	}
+	function attendanceZone(percentage) {
+		if (percentage < THRESHOLDS.eligible) return "danger";
+		if (percentage < THRESHOLDS.warning) return "watch";
+		if (percentage < THRESHOLDS.high) return "stable";
+		return "high";
+	}
+	function eligibilityLabel(percentage) {
+		if (percentage >= THRESHOLDS.high) return "Excellent";
+		if (percentage >= THRESHOLDS.warning) return "Strong";
+		if (percentage >= THRESHOLDS.eligible) return "Eligible";
+		return "Shortage";
+	}
+	function requiredClassesForThreshold(presentClasses, totalClasses, threshold) {
+		if (totalClasses <= 0) return 0;
+		const target = threshold / 100;
+		if (presentClasses / totalClasses >= target) return 0;
+		return Math.max(0, Math.ceil(((target * totalClasses) - presentClasses) / (1 - target)));
+	}
+	function projectedMetrics(student) {
+		const baselinePresent = Number(student.present_classes || 0);
+		const baselineTotal = Number(student.total_classes || 0);
+		const currentPresent = baselinePresent + (student.marked_status === "Present" ? 1 : 0);
+		const currentTotal = baselineTotal + 1;
+		const percentage = currentTotal ? Math.round((currentPresent / currentTotal) * 10000) / 100 : 0;
+		return {
+			percentage,
+			zone: attendanceZone(percentage),
+			eligibility: eligibilityLabel(percentage),
+			required67: requiredClassesForThreshold(currentPresent, currentTotal, THRESHOLDS.eligible),
+			required75: requiredClassesForThreshold(currentPresent, currentTotal, THRESHOLDS.warning),
+			required85: requiredClassesForThreshold(currentPresent, currentTotal, THRESHOLDS.high),
+		};
+	}
+	async function j(url, opt = {}) {
+		const response = await fetch(API + url, opt);
+		const payload = await response.json().catch(() => ({}));
+		if (!response.ok || payload.status === "error") {
+			throw new Error(payload.message || `Request failed with status ${response.status}`);
+		}
+		return payload;
+	}
+	function goToLogin() {
+		location.href = "login.html";
+	}
+	function setFaculty(faculty) {
+		el.facultyName.textContent = faculty.name || "Faculty Member";
+		el.facultyDept.textContent = faculty.department
+			? `Department of ${faculty.department}`
+			: "Department unavailable";
+		el.facultyId.textContent = faculty.employee_id || "-";
+		el.facultyAvatar.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(
+			faculty.name || "Faculty"
+		)}`;
+	}
+	function setStats(stats) {
+		el.activeSubjects.textContent = stats.active_subjects ?? 0;
+		el.trackedStudents.textContent = stats.tracked_students ?? 0;
+		el.dangerCount.textContent = stats.students_below_67 ?? 0;
+		el.strongCount.textContent = stats.students_above_85 ?? 0;
+		el.averageAttendance.textContent = pct(stats.average_attendance ?? 0);
+	}
+function renderSubjects() {
+	if (!state.subjects.length) {
+		el.subjectsContainer.innerHTML =
+			"<div class='xl:col-span-2 rounded-[1.5rem] border border-dashed border-slate-300 bg-white px-5 py-10 text-center text-sm text-slate-400'>No subjects are currently assigned to this faculty account.</div>";
+		return;
+	}
+	el.subjectsContainer.innerHTML = state.subjects
+		.map(
+			(subject) => `<article class='rounded-[1.6rem] border border-slate-200 bg-white p-5 shadow-sm'><div class='flex items-start justify-between gap-4'><div><p class='text-xs font-bold uppercase tracking-[0.3em] text-slate-400'>Subject ${esc(subject.subject_id)}</p><h3 class='mt-2 text-xl font-extrabold text-slate-900'>${esc(subject.subject_name)}</h3></div><span class='rounded-full bg-slate-900 px-3 py-1 text-[11px] font-black uppercase tracking-[0.22em] text-white'>${esc(subject.student_count)} Students</span></div><div class='mt-5 grid grid-cols-3 gap-3 text-center'><div class='rounded-2xl bg-slate-50 px-3 py-4'><p class='text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400'>Average</p><p class='mt-2 text-lg font-black'>${pct(subject.average_percentage)}</p></div><div class='rounded-2xl bg-red-50 px-3 py-4'><p class='text-[11px] font-bold uppercase tracking-[0.2em] text-red-400'>Below 67</p><p class='mt-2 text-lg font-black text-red-600'>${esc(subject.shortage_count)}</p></div><div class='rounded-2xl bg-emerald-50 px-3 py-4'><p class='text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-400'>85 Plus</p><p class='mt-2 text-lg font-black text-emerald-600'>${esc(subject.strong_count)}</p></div></div><div class='mt-5 flex flex-wrap gap-2'>${(subject.cohorts || []).slice(0, 3).map((cohort) => `<span class='rounded-full bg-slate-100 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-slate-600'>${esc(cohort.branch)} Y${esc(cohort.year)} ${esc(cohort.section)}</span>`).join("") || "<span class='rounded-full bg-slate-100 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500'>No mapped cohort</span>"}</div><div class='mt-5 flex items-center justify-between gap-4'><p class='text-xs font-medium text-slate-500'>Last recorded session: ${esc(fmtDate(subject.last_attendance_date))}</p><button type='button' data-action='open' data-id='${esc(subject.subject_id)}' class='rounded-2xl bg-slate-900 px-4 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white'>Take Attendance</button></div></article>`
+		)
+		.join("");
+}
+function setZones(zone) {
+	document.querySelectorAll(".zone").forEach((button) => {
+		button.classList.toggle("active", button.dataset.zone === zone);
+	});
+}
+function renderInsights(rows) {
+	if (!rows.length) {
+		el.insightTableBody.innerHTML = "";
+		el.insightEmpty.classList.remove("hidden");
+		return;
+	}
+	el.insightEmpty.classList.add("hidden");
+	el.insightTableBody.innerHTML = rows
+		.map(
+			(student) => `<tr class='border-b border-slate-100 last:border-b-0'><td class='px-5 py-4 font-semibold'>${esc(student.name)}</td><td class='px-5 py-4 text-sm text-slate-600'>${esc(student.roll_no)}</td><td class='px-5 py-4 text-center text-sm font-black ${student.percentage < THRESHOLDS.eligible ? "text-red-600" : student.percentage >= THRESHOLDS.high ? "text-emerald-600" : "text-amber-600"}'>${pct(student.percentage)}</td><td class='px-5 py-4 text-center'><span class='rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] ${badge(student.zone)}'>${esc(student.eligibility)}</span></td><td class='px-5 py-4 text-center text-sm font-semibold text-slate-700'>${esc(student.required_for_67)}</td><td class='px-5 py-4 text-sm text-slate-500'>${esc((student.subject_names || []).join(", "))}</td></tr>`
+		)
+		.join("");
+}
+function renderSessionHistory() {
+	if (!state.currentContext) {
+		el.historyList.innerHTML =
+			"<div class='rounded-[1.3rem] border border-dashed border-slate-200 px-4 py-6 text-center text-sm text-slate-400'>Session history will appear here after you load a cohort.</div>";
+		return;
+	}
+	if (!state.sessionHistory.length) {
+		el.historyList.innerHTML =
+			"<div class='rounded-[1.3rem] border border-dashed border-slate-200 px-4 py-6 text-center text-sm text-slate-400'>No attendance sessions have been saved for this cohort yet.</div>";
+		return;
+	}
+	el.historyList.innerHTML = state.sessionHistory
+		.map((session) => {
+			const active = session.date === state.currentContext.date;
+			return `<article class='history-card rounded-[1.3rem] border p-4 ${active ? "active border-slate-900" : "border-slate-200 bg-slate-50 text-slate-900"}'><div class='flex items-start justify-between gap-3'><div><p class='text-sm font-bold'>${esc(fmtDate(session.date))}</p><p class='mt-1 text-xs ${active ? "text-slate-300" : "text-slate-500"}'>${esc(session.present_count)} present, ${esc(session.absent_count)} absent</p></div><span class='rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] ${active ? "bg-white/10 text-white" : session.completion_label === "Complete" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}'>${esc(session.completion_label)}</span></div><p class='mt-3 text-xs ${active ? "text-slate-300" : "text-slate-500"}'>${esc(session.recorded_count)}/${esc(session.expected_count)} students recorded${session.missing_count ? `, ${esc(session.missing_count)} pending` : ""}</p><button type='button' data-action='open-session' data-date='${esc(session.date)}' class='mt-4 w-full rounded-2xl px-4 py-3 text-xs font-bold uppercase tracking-[0.18em] ${active ? "bg-white text-slate-900" : "bg-slate-900 text-white"}'>${active ? "Open Now" : "View / Edit"}</button></article>`;
+		})
+		.join("");
+}
+function renderSheet() {
+	const records = state.currentSheet?.records || [];
+	const subject = state.currentSheet?.subject;
+	const context = state.currentSheet?.context;
+	el.sheetTitle.textContent = subject ? `${subject.subject_name} Attendance Sheet` : "Attendance sheet";
+	el.sheetSubtitle.textContent = context
+		? `${context.branch} - Year ${context.year} - Section ${context.section}`
+		: "Select a subject and cohort to begin.";
+	el.sheetDateValue.textContent = context ? fmtDate(context.date) : "-";
+	el.sheetSubmitButton.disabled = !records.length;
+	if (!records.length) {
+		el.sheetStudentCount.textContent = "0";
+		el.sheetAverage.textContent = "0%";
+		el.sheetShortage.textContent = "0";
+		el.sheetRecordedCount.textContent = "0/0";
+		el.sheetSessionMode.textContent = "Choose a date to start marking.";
+		el.sheetTableBody.innerHTML = "";
+		el.sheetEmpty.classList.remove("hidden");
+		el.sheetSelectionSummary.textContent = "Present selected: 0 | Absent selected: 0";
+		el.sheetFooterHint.textContent = "No student rows are available for this selection.";
+		return;
+	}
+	const rows = records.map((student) => ({ student, projected: projectedMetrics(student) }));
+	const recordedCount = records.filter((student) => student.session_recorded).length;
+	const average = rows.reduce((sum, row) => sum + row.projected.percentage, 0) / rows.length;
+	const shortage = rows.filter((row) => row.projected.percentage < THRESHOLDS.eligible).length;
+	const presentCount = records.filter((student) => student.marked_status === "Present").length;
+	const absentCount = records.filter((student) => student.marked_status === "Absent").length;
+	el.sheetEmpty.classList.add("hidden");
+	el.sheetStudentCount.textContent = String(rows.length);
+	el.sheetAverage.textContent = pct(average);
+	el.sheetShortage.textContent = String(shortage);
+	el.sheetRecordedCount.textContent = `${recordedCount}/${rows.length}`;
+	el.sheetSelectionSummary.textContent = `Present selected: ${presentCount} | Absent selected: ${absentCount}`;
+	if (recordedCount === 0) {
+		el.sheetSessionMode.textContent = "New session. Saving will create attendance for this date.";
+		el.sheetFooterHint.textContent = "This date has not been recorded yet for the selected cohort.";
+		el.sheetSubmitButton.textContent = "Save Attendance";
+	} else if (recordedCount === rows.length) {
+		el.sheetSessionMode.textContent = "Saved session found. Saving again will update the attendance for this date.";
+		el.sheetFooterHint.textContent = "This date already has saved attendance. Adjust any rows and save again.";
+		el.sheetSubmitButton.textContent = "Update Attendance";
+	} else {
+		el.sheetSessionMode.textContent = "Partial session found. Saving will complete or update the pending rows.";
+		el.sheetFooterHint.textContent = "Some students were already recorded for this date. Saving will fill the rest.";
+		el.sheetSubmitButton.textContent = "Save Attendance";
+	}
+	el.sheetTableBody.innerHTML = rows
+		.map(({ student, projected }) => {
+			const statusLabel = student.session_recorded
+				? `Saved on this date: ${student.session_status}`
+				: "Not yet saved for this date";
+			return `<tr class='border-b border-slate-100 last:border-b-0'><td class='px-5 py-4 text-sm font-semibold text-slate-700'>${esc(student.roll_no)}</td><td class='px-5 py-4'><div class='font-semibold text-slate-900'>${esc(student.name)}</div><div class='mt-1 text-xs text-slate-400'>${esc(student.branch)} - Year ${esc(student.year)} - Section ${esc(student.section)}</div><div class='mt-1 text-xs text-slate-400'>${esc(statusLabel)}</div></td><td class='px-5 py-4 text-center text-sm font-semibold text-slate-700'>${esc(student.previous_attendance)}</td><td class='px-5 py-4 text-center text-sm font-black ${projected.percentage < THRESHOLDS.eligible ? "text-red-600" : projected.percentage >= THRESHOLDS.high ? "text-emerald-600" : "text-amber-600"}'>${pct(projected.percentage)}</td><td class='px-5 py-4 text-center'><span class='rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] ${badge(projected.zone)}'>${esc(projected.eligibility)}</span></td><td class='px-5 py-4 text-center text-sm font-semibold text-slate-600'>${esc(projected.required67)} / ${esc(projected.required75)} / ${esc(projected.required85)}</td><td class='px-5 py-4 text-center'><div class='inline-flex rounded-2xl border border-slate-200 bg-slate-50 p-1'><button type='button' data-action='status' data-id='${esc(student.student_id)}' data-status='Present' class='rounded-xl px-3 py-2 text-xs font-bold uppercase tracking-[0.15em] ${student.marked_status === "Present" ? "bg-emerald-600 text-white" : "text-slate-600"}'>Present</button><button type='button' data-action='status' data-id='${esc(student.student_id)}' data-status='Absent' class='rounded-xl px-3 py-2 text-xs font-bold uppercase tracking-[0.15em] ${student.marked_status === "Absent" ? "bg-red-600 text-white" : "text-slate-600"}'>Absent</button></div></td></tr>`;
+		})
+		.join("");
+}
+async function loadInsightZone(zone) {
+	state.activeZone = zone;
+	setZones(zone);
+	try {
+		const response = await j(`/api/faculty-zone-students/${encodeURIComponent(state.employeeId)}/${zone}`);
+		renderInsights(response.data || []);
+		banner(el.insightBanner, "");
+	} catch (error) {
+		renderInsights([]);
+		banner(el.insightBanner, error.message, "error");
+	}
+}
+async function openSetup(subjectId = state.selectedSubject?.subject_id) {
+	if (!subjectId) {
+		banner(el.dashboardBanner, "Choose a subject first.", "warn");
+		return;
+	}
+	state.selectedSubject = state.map[String(subjectId)] || null;
+	if (!state.selectedSubject) {
+		banner(el.dashboardBanner, "Subject could not be loaded.", "error");
+		return;
+	}
+	el.setupSubjectName.textContent = state.selectedSubject.subject_name;
+	banner(el.setupBanner, "");
+	try {
+		const response = await j(`/api/subject-cohorts/${encodeURIComponent(subjectId)}`);
+		const cohorts = response.data || [];
+		if (!cohorts.length) {
+			banner(el.dashboardBanner, "No mapped cohort was found for this subject.", "warn");
+			return;
+		}
+		el.cohortSelect.innerHTML =
+			"<option value=''>Select cohort</option>" +
+			cohorts
+				.map(
+					(cohort) => `<option value='${esc(`${cohort.branch}|${cohort.year}|${cohort.section}`)}'>${esc(cohort.branch)} - Year ${esc(cohort.year)} - Section ${esc(cohort.section)} (${esc(cohort.student_count)} students)</option>`
+				)
+				.join("");
+		const sameSubject =
+			state.currentSheet &&
+			String(state.currentSheet.subject?.subject_id) === String(subjectId) &&
+			state.currentContext;
+		el.cohortSelect.value = sameSubject
+			? `${state.currentContext.branch}|${state.currentContext.year}|${state.currentContext.section}`
+			: "";
+		el.sessionDateInput.value = sameSubject
+			? state.currentContext.date
+			: new Date().toISOString().split("T")[0];
+		el.setupModal.classList.remove("hidden");
+		el.setupModal.classList.add("flex");
+	} catch (error) {
+		banner(el.dashboardBanner, error.message, "error");
+	}
+}
+function closeSetupModal() {
+	el.setupModal.classList.add("hidden");
+	el.setupModal.classList.remove("flex");
+	banner(el.setupBanner, "");
+}
+async function startAttendanceSheet() {
+	const cohort = el.cohortSelect.value;
+	const sessionDate = el.sessionDateInput.value;
+	if (!cohort) {
+		banner(el.setupBanner, "Please choose a cohort before continuing.", "warn");
+		return;
+	}
+	if (!sessionDate) {
+		banner(el.setupBanner, "Please select the class session date.", "warn");
+		return;
+	}
+	const [branch, year, section] = cohort.split("|");
+	state.currentContext = { branch, year, section, date: sessionDate };
+	closeSetupModal();
+	await loadSheet();
+}
+async function loadSessionHistory(showMessage = false) {
+	if (!state.selectedSubject || !state.currentContext) {
+		state.sessionHistory = [];
+		renderSessionHistory();
+		return;
+	}
+	const { branch, year, section } = state.currentContext;
+	el.historyList.innerHTML =
+		"<div class='rounded-[1.3rem] border border-dashed border-slate-200 px-4 py-6 text-center text-sm text-slate-400'>Loading session history...</div>";
+	try {
+		const response = await j(`/api/subject-session-history/${encodeURIComponent(state.selectedSubject.subject_id)}/${encodeURIComponent(branch)}/${encodeURIComponent(year)}/${encodeURIComponent(section)}`);
+		state.sessionHistory = response.data || [];
+		renderSessionHistory();
+		banner(el.historyBanner, showMessage ? "Session history refreshed." : "");
+	} catch (error) {
+		state.sessionHistory = [];
+		renderSessionHistory();
+		banner(el.historyBanner, error.message, "error");
+	}
+}
+async function loadSheet() {
+	if (!state.selectedSubject || !state.currentContext) return;
+	el.dashboardView.classList.add("hidden");
+	el.sheetSection.classList.remove("hidden");
+	el.sheetTableBody.innerHTML =
+		"<tr><td colspan='7' class='px-6 py-10 text-center text-sm text-slate-400'>Loading attendance sheet...</td></tr>";
+	el.sheetEmpty.classList.add("hidden");
+	banner(el.sheetBanner, "");
+	banner(el.historyBanner, "");
+	try {
+		const { branch, year, section, date } = state.currentContext;
+		const response = await j(`/api/subject-students/${encodeURIComponent(state.selectedSubject.subject_id)}/${encodeURIComponent(branch)}/${encodeURIComponent(year)}/${encodeURIComponent(section)}?session_date=${encodeURIComponent(date)}`);
+		state.currentSheet = {
+			subject: state.selectedSubject,
+			context: { ...state.currentContext },
+			meta: response.meta || {},
+			records: (response.data || []).map((student) => ({
+				...student,
+				marked_status: student.session_status || "Present",
+			})),
+		};
+		renderSheet();
+		await loadSessionHistory(false);
+	} catch (error) {
+		state.currentSheet = {
+			subject: state.selectedSubject,
+			context: { ...state.currentContext },
+			meta: {},
+			records: [],
+		};
+		state.sessionHistory = [];
+		renderSheet();
+		renderSessionHistory();
+		banner(el.sheetBanner, error.message, "error");
+	}
+}
+async function submitAttendanceSheet() {
+	if (!state.currentSheet || !state.currentSheet.records.length) {
+		banner(el.sheetBanner, "No rows are available to submit.", "warn");
+		return;
+	}
+	el.sheetSubmitButton.disabled = true;
+	try {
+		const body = state.currentSheet.records.map((student) => ({
+			student_id: student.student_id,
+			subject_id: state.currentSheet.subject.subject_id,
+			date: state.currentSheet.context.date,
+			status: student.marked_status,
+		}));
+		const response = await j("/api/mark-attendance", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(body),
+		});
+		const inserted = Number(response.data?.inserted_count || 0);
+		const updated = Number(response.data?.updated_count || 0);
+		banner(el.sheetBanner, response.message || "Attendance saved successfully.", inserted || updated ? "success" : "warn");
+		await refreshDashboard(false);
+		await loadSheet();
+	} catch (error) {
+		banner(el.sheetBanner, error.message, "error");
+	} finally {
+		el.sheetSubmitButton.disabled = false;
+	}
+}
+function backToDashboard() {
+	el.sheetSection.classList.add("hidden");
+	el.dashboardView.classList.remove("hidden");
+	el.dashboardView.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+function openCurrentSelection() {
+	openSetup(state.selectedSubject?.subject_id);
+}
+function startMarkingFlow() {
+	if (state.subjects.length === 1) {
+		openSetup(state.subjects[0].subject_id);
+		return;
+	}
+	el.subjectsContainer.scrollIntoView({ behavior: "smooth", block: "start" });
+	banner(el.dashboardBanner, "Choose a subject card to open the attendance sheet.", "info");
+}
+async function refreshDashboard(showMessage) {
+	try {
+		const [faculty, stats, subjects] = await Promise.all([
+			j(`/api/faculty/${encodeURIComponent(state.employeeId)}`),
+			j(`/api/faculty-stats/${encodeURIComponent(state.employeeId)}`),
+			j(`/api/faculty-subjects/${encodeURIComponent(state.employeeId)}`),
+		]);
+		state.subjects = subjects.data || [];
+		state.map = state.subjects.reduce((result, subject) => ((result[String(subject.subject_id)] = subject), result), {});
+		setFaculty(faculty.data || faculty);
+		setStats(stats.data || stats);
+		renderSubjects();
+		if (showMessage) {
+			banner(el.dashboardBanner, "Faculty dashboard refreshed successfully.", "success");
+		}
+	} catch (error) {
+		banner(el.dashboardBanner, error.message, "error");
+		el.subjectsContainer.innerHTML = `<div class='xl:col-span-2 rounded-[1.5rem] border border-dashed border-red-200 bg-red-50 px-5 py-10 text-center text-sm text-red-600'>Dashboard data could not be loaded. Check whether the Flask server is running on ${esc(API)}.</div>`;
+	}
+}
+function logoutUser(event) {
+	event.preventDefault();
+	localStorage.removeItem("userId");
+	localStorage.removeItem("userName");
+	localStorage.removeItem("role");
+	goToLogin();
+}
+function wire() {
+	el.subjectsContainer.addEventListener("click", (event) => {
+		const button = event.target.closest("[data-action='open']");
+		if (button) openSetup(button.dataset.id);
+	});
+	el.sheetTableBody.addEventListener("click", (event) => {
+		const button = event.target.closest("[data-action='status']");
+		if (!button || !state.currentSheet) return;
+		state.currentSheet.records = state.currentSheet.records.map((student) =>
+			String(student.student_id) === String(button.dataset.id)
+				? { ...student, marked_status: button.dataset.status }
+				: student
+		);
+		renderSheet();
+	});
+	el.historyList.addEventListener("click", (event) => {
+		const button = event.target.closest("[data-action='open-session']");
+		if (!button || !state.currentContext) return;
+		state.currentContext = { ...state.currentContext, date: button.dataset.date };
+		loadSheet();
+	});
+	document.querySelectorAll(".zone").forEach((button) => {
+		button.addEventListener("click", () => loadInsightZone(button.dataset.zone));
+	});
+	el.setupModal.addEventListener("click", (event) => {
+		if (event.target.id === "setupModal") closeSetupModal();
+	});
+	document.addEventListener("keydown", (event) => {
+		if (event.key === "Escape") closeSetupModal();
+	});
+}
+async function init() {
+	if (state.role !== "faculty" || !state.employeeId) {
+		goToLogin();
+		return;
+	}
+	el.todayLabel.textContent = new Date().toLocaleDateString(undefined, {
+		day: "numeric",
+		month: "short",
+		year: "numeric",
+	});
+	wire();
+	await refreshDashboard(false);
+	await loadInsightZone(state.activeZone);
+}
+window.addEventListener('DOMContentLoaded',init);
+</script>
 </body>
 </html>

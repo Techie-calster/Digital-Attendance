@@ -1,0 +1,853 @@
+25th Feb ,2026                                                      Version 2.0
+
+
+
+
+                 SOFTWARE REQUIREMENTS SPECIFICATION
+                                     VERSION 2.0
+                 REAL-TIME ATTENDANCE MONITERING SYSTEM (RAMS)
+                                     Prepared By
+                                        Prateek
+                                     Rahul Bhar
+                                    Gaurav Kumar
+                                     Sourish Maji
+                                Aditya Dhanraj Gupta
+
+
+
+
+                   Department of Computer Science and Engineering
+                       Faculty of Technology, University of Delhi
+
+
+                                    Submi ed to:
+                                      Dr. Rekha R
+                                  Assistant Professor
+                   Department of Computer Science and Engineering
+
+
+
+
+                      Prepared for Academic & Development Use
+
+                          Based on IEEE Std 830–1984 (SRS)
+
+
+
+
+                                                    1
+25th Feb ,2026                                                                                                         Version 2.0
+
+
+TABLE OF CONTENTS
+    1. Introduc on ............................................................................................................ 3
+         1.1 Purpose ......................................................................................................... 3
+         1.2 Scope ............................................................................................................. 3
+         1.3 Acronyms and Abbrevia ons ......................................................................... 3
+         1.4 References ..................................................................................................... 4
+         1.5 Overview ....................................................................................................... 4
+    2. Overall Descrip on .................................................................................................. 5
+         2.1 Product Perspec ve ....................................................................................... 5
+         2.2 Product Func ons .......................................................................................... 5
+         2.3 User Characteris cs ....................................................................................... 6
+         2.4 Opera ng Environment ................................................................................. 6
+         2.5 Constraints ..................................................................................................... 6
+         2.6 Assump ons and Dependencies ................................................................... 6
+         2.7 User Use Cases .............................................................................................. 7
+           2.7.1 Use Case: Student Dashboard and A endance Analysis …………………..... 7
+           2.7.2 Use Case: Faculty A endance Management .......................................... 8
+           2.7.3 Use Case: Administrator Control and Conﬁgura on ............................... 9
+    3. Speciﬁc Requirements ........................................................................................... 11
+         3.1 Func onal Requirements ............................................................................ 11
+           3.1.1 Authen ca on System .......................................................................... 11
+           3.1.2 Student Data Management ................................................................... 11
+           3.1.3 Faculty Data Management .................................................................... 11
+           3.1.4 A endance Recording ........................................................................... 11
+           3.1.5 A endance Calcula on ......................................................................... 11
+           3.1.6 Eligibility and Requirement Calcula on ................................................ 11
+           3.1.7 Dashboard Display ................................................................................ 11
+           3.1.8 Administra ve Controls ........................................................................ 12
+         3.2 Performance Requirements ......................................................................... 12
+         3.3 Design Constraints ....................................................................................... 12
+         3.4 External Interface Requirements ................................................................. 12
+         3.5 Non-Func onal Requirements .................................................................... 12
+    4. So ware Design .................................................................................................... 12
+         4.1 System Architecture .................................................................................... 12
+         4.2 Detailed Design ........................................................................................... 13
+         4.3 Sequence Diagrams ..................................................................................... 14
+           4.3.1 Sequence Flow – Student Viewing A endance ..................................... 15
+           4.3.2 Sequence Flow – Faculty Marking A endance ..................................... 15
+           4.3.3 Sequence Flow – Admin Upda ng Data ............................................... 16
+         4.4 Database Schema ........................................................................................ 17
+         4.5 Security Design ............................................................................................ 19
+           4.5.1 Authen ca on and Authoriza on ........................................................ 19
+
+                                                                         2
+25th Feb ,2026                                                                                                             Version 2.0
+
+
+                 4.5.2 Data Security Measures ........................................................................ 20
+                 4.5.3 Protec on Against Common A acks ..................................................... 20
+                 4.5.4 Data Integrity ........................................................................................ 20
+5.0 Traceability .................................................................................................................. 20
+6.0 Future Enhancements ................................................................................................. 22
+
+
+
+
+                                                                            3
+25th Feb ,2026                                                                         Version 2.0
+
+
+1. Introduc on
+
+1.1 Purpose
+This So ware Requirements Speciﬁca on (SRS) document provides a comprehensive and
+structured descrip on of the Digital A endance Management System. The purpose of this
+document is to deﬁne the func onal and non-func onal requirements, system constraints,
+and opera onal behaviour of the system in a precise and unambiguous manner. It serves
+as a formal agreement between stakeholders, developers, and evaluators, ensuring that all
+par es share a common understanding of the system’s objec ves and expected outcomes.
+The document also acts as a reference point throughout the so ware development
+lifecycle, guiding design decisions, implementa on strategies, and valida on processes.
+
+
+1.2 Scope
+The Digital A endance Management System is a web-based so ware applica on designed
+to streamline and automate the process of a endance tracking in educa onal ins tu ons.
+The system enables faculty members to eﬃciently mark a endance, allows students to
+monitor their academic a endance status in real me, and provides administra ve control
+for managing ins tu onal data and policies.
+The system covers core func onali es including user authen ca on, subject-wise
+a endance management, performance tracking, eligibility evalua on based on
+ins tu onal rules, and centralized data management. It is intended to reduce manual
+eﬀort, improve data accuracy, and provide transparency across all levels of users.
+
+
+1.3 Acronyms and Abbrevia ons
+
+Term / Acronym            Deﬁni on / Full Form
+
+                          The record of a student’s presence or absence for a par cular class
+A endance
+                          session.
+
+                          The ra o of classes a ended by a student to the total number of
+A endance Percentage
+                          classes conducted for a subject, expressed as a percentage.
+
+                          Marks awarded to a student based on a endance percentage as
+A endance Marks
+                          per ins tu onal rules.
+
+                          Predeﬁned ins tu onal policies that specify a endance thresholds
+A endance Rules
+                          for examina on eligibility and mark alloca on.
+
+                          A system user responsible for managing student records, subjects,
+Administrator
+                          faculty assignments, and a endance rules.
+
+
+                                                    4
+25th Feb ,2026                                                                             Version 2.0
+
+
+Term / Acronym               Deﬁni on / Full Form
+
+                             A single occurrence of a class conducted for a subject on a speciﬁc
+Class Session
+                             date and me.
+
+                             The qualiﬁca on status of a student to appear in examina ons
+Examina on Eligibility
+                             based on a endance criteria.
+
+                             A system user responsible for conduc ng classes and recording
+Faculty
+                             a endance for assigned subjects.
+
+Func onal Requirement        A speciﬁca on that describes a func on or behavior that the system
+(FR)                         must perform.
+
+Non-Func onal                A speciﬁca on that deﬁnes system quali es such as security,
+Requirement (NFR)            availability, and performance.
+
+                             A system user enrolled in one or more subjects whose a endance is
+Student
+                             monitored by the system.
+
+                             An academic course or unit oﬀered by the ins tu on for which
+Subject
+                             a endance is recorded.
+
+                             Any individual who interacts with the system, including students,
+User
+                             faculty members, and administrators.
+
+Web-Based Applica on         A so ware system accessed through a web browser over a network.
+
+SRS                          So ware Requirements Speciﬁca on
+
+UI                           User Interface
+
+DB                           Database
+
+API                          Applica on Programming Interface
+
+CRUD                         Create, Read, Update, Delete
+
+SQL                          Structured Query Language
+
+
+
+
+1.4 References
+         IEEE Std 830–1984 – So ware Requirements Speciﬁca on Guidelines
+         Academic A endance Policies (University of Delhi)
+
+
+1.5 Overview
+
+                                                        5
+25th Feb ,2026                                                                   Version 2.0
+
+
+This document is organized into mul ple sec ons covering system overview, user
+interac on, func onal requirements, system design, database schema, and traceability.
+Each sec on builds upon the previous one to provide a detailed understanding of the
+system.
+
+
+
+2. Overall Descrip on
+2.1 Product Perspec ve
+The Digital A endance Management System is designed as a standalone web-based
+applica on opera ng within a client-server architecture. The frontend component provides
+an interac ve user interface accessible through web browsers, while the backend handles
+business logic, data processing, and database interac ons.
+The system integrates mul ple modules including authen ca on, a endance tracking,
+repor ng, and administra ve control. It maintains a centralized database that stores all
+user and a endance-related data. While the system currently operates independently, it is
+designed with extensibility in mind, allowing future integra on with ins tu onal ERP
+systems or learning management pla orms.
+
+
+2.2 Product Func ons
+The system provides a comprehensive set of func onali es aimed at eﬃcient a endance
+management and academic monitoring. These func ons include, but are not limited to:
+       Secure user authen ca on for students, faculty, and administrators
+       Storage and management of student and faculty informa on
+       Subject-wise a endance tracking and real- me updates
+       Automated calcula on of a endance percentage
+       Determina on of eligibility for examina ons based on predeﬁned thresholds
+       Calcula on of required classes to meet a endance criteria (67%, 75%, 85%)
+       Faculty interface for marking a endance in a structured tabular format
+       Administra ve control for managing user data, permissions, and system rules
+These func ons collec vely ensure that the system not only records a endance but also
+provides ac onable insights to users.
+
+
+2.3 User Characteris cs
+The system is intended for three primary categories of users:
+
+
+                                                    6
+25th Feb ,2026                                                                     Version 2.0
+
+
+Students
+Students are expected to have basic familiarity with web applica ons. Their interac on with
+the system is primarily read-only, focusing on viewing a endance sta s cs, eligibility
+status, and academic performance.
+Faculty
+Faculty members possess moderate technical proﬁciency and are responsible for marking
+a endance, managing subject-level data, and reviewing student records.
+Administrator
+Administrators have advanced access privileges and are responsible for maintaining system
+data, conﬁguring rules, and managing permissions. They ensure the integrity and
+correctness of system opera ons.
+
+
+2.4 Opera ng Environment
+The system operates in a web-based environment and requires:
+         A modern web browser (Chrome, Edge, Firefox)
+         Backend server (Node.js / Django / similar)
+         Rela onal database system (MySQL / PostgreSQL)
+
+
+2.5 Constraints
+The system is subject to several constraints:
+         Requires con nuous internet connec vity
+         Dependent on accurate data entry by faculty
+         Must adhere to ins tu onal a endance policies
+         Limited by browser compa bility and server performance
+
+
+2.6 Assump ons and Dependencies
+The system assumes that:
+         Student and faculty data are pre-registered
+         Subjects are correctly mapped to both students and faculty
+         A endance policies (67%, 75%, 85%) are predeﬁned
+         Semester dura on and total classes are known
+
+
+                                                        7
+25th Feb ,2026                                                                      Version 2.0
+
+
+
+
+2.7 User Use Cases
+This sec on describes the interac on between users and the system.
+
+
+2.7.1 Use Case: Student Dashboard and A endance Analysis
+
+Field                Details
+
+                     This use case allows students to view their academic a endance details
+Descrip on
+                     in a subject-wise manner.
+
+Actors               Student
+
+Precondi ons         Student must be authen cated
+
+                     1.Student logs into the system
+                     2. System displays dashboard with enrolled subjects
+                     3. Student selects a subject
+                     4. System retrieves a endance data
+Main Flow            5. System calculates:
+                     • A endance percentage
+                     • Eligibility status
+                     • Required classes for thresholds
+                     6. System displays results
+
+Postcondi ons        Student receives updated a endance insights
+
+
+
+
+                                                     8
+25th Feb ,2026                                                       Version 2.0
+
+
+
+
+                            Fig 1.1: Student use case diagram
+
+
+2.7.2 Use Case: Faculty A endance Management
+
+Field            Details
+
+                 This use case enables faculty members to mark and manage
+Descrip on
+                 a endance for students.
+
+Actors           Faculty
+
+Precondi ons     Faculty must be authen cated
+
+                    1.     Faculty logs in
+                    2.     System displays assigned subjects
+Main Flow           3.     Faculty selects a subject
+                    4.     System loads structured a endance sheet
+                    5.     Sheet displays:
+
+                                                  9
+25th Feb ,2026                                                            Version 2.0
+
+
+Field            Details
+
+                        - Student name
+                        - Roll number
+                        - Previous a endance
+                        - Current percentage
+                     6. Faculty marks a endance
+                     7. System validates and stores data
+                     8. System updates a endance sta s cs
+
+Postcondi ons    A endance is recorded and updated
+
+
+
+
+                           Fig 1.2: Faculty use case diagram
+
+
+2.7.3 Use Case: Administrator Control and Conﬁgura on
+
+Field            Details
+
+Descrip on       Allows administrators to manage system data and rules.
+
+
+                                                 10
+25th Feb ,2026                                                          Version 2.0
+
+
+Field            Details
+
+Actors           Administrator
+
+Precondi ons     Administrator must be authen cated
+
+                    1. Admin logs in
+                    2. Admin selects opera on (Manage students, manage faculty,
+Main Flow              conﬁgure rules, Assign permissions);
+                    3. System processes updates
+                    4. Database is updated
+
+Postcondi ons    System data and rules are updated
+
+
+
+
+                           Fig 1.3: Admin use case diagram
+
+
+
+
+                                                11
+25th Feb ,2026                                                                       Version 2.0
+
+
+3. Speciﬁc Requirements
+
+
+3.1 Func onal Requirements
+
+
+        3.1.1: Authen ca on System
+        The system shall provide secure login func onality for all users. Creden als shall be
+        validated before gran ng access.
+
+
+        3.1.2: Student Data Management
+        The system shall store detailed student informa on including academic and
+        personal iden ﬁers.
+
+
+        3.1.3: Faculty Data Management
+        The system shall maintain faculty records and subject assignments.
+
+
+        3.1.4: A endance Recording
+        The system shall allow faculty to mark a endance through a structured interface.
+        A endance data shall be validated, stored, and immediately reﬂected in student
+        records.
+
+
+        3.1.5: A endance Calcula on
+        The system shall compute a endance percentage dynamically using stored
+        a endance records.
+
+
+        3.1.6: Eligibility and Requirement Calcula on
+        The system shall determine eligibility based on predeﬁned thresholds and calculate
+        required a endance for future compliance.
+
+
+        3.1.7: Dashboard Display
+        The system shall present a endance, eligibility, and performance data in a clear and
+        structured format.
+
+
+                                                    12
+25th Feb ,2026                                                                      Version 2.0
+
+
+
+
+        3.1.8: Administra ve Controls
+        The system shall allow administrators to manage data, permissions, and system
+        rules.
+
+
+3.2 Performance Requirements
+The system shall ensure fast response mes, with dashboard loading and a endance
+updates occurring within acceptable me limits under normal load condi ons.
+
+
+3.3 Design Constraints
+The system shall use a rela onal database with normalized structure to ensure data
+integrity and eﬃcient querying.
+
+
+3.4 External Interface Requirements
+User Interface
+The interface shall be simple, structured, and intui ve, resembling spreadsheet-like layouts
+for a endance marking.
+So ware Interfaces
+The system shall interact with backend APIs and database systems.
+
+
+3.5 Non-Func onal Requirements
+       Usability: Easy to learn and operate
+       Reliability: Accurate data processing
+       Security: Role-based access control
+       Scalability: Support mul ple users simultaneously
+
+
+4. So   ware Design
+
+
+4.1 System Architecture
+
+
+
+
+                                                   13
+25th Feb ,2026                                                                     Version 2.0
+
+
+The Digital A endance Management System follows a modular client–server architecture
+designed to ensure scalability, maintainability, and eﬃcient data handling within a college
+environment.
+The system is divided into three primary architectural layers: the Presenta on Layer, the
+Applica on Layer, and the Data Layer.
+Presenta on Layer (Frontend)
+This layer represents the user interface of the system, accessible through web browsers. It
+provides separate dashboards for students, faculty, and administrators. The interface is
+designed to be simple and structured, allowing users to perform opera ons such as viewing
+a endance, marking a endance, and managing records with minimal complexity.
+Applica on Layer (Backend Server)
+The backend layer is responsible for handling all business logic and system opera ons. It
+processes user requests, performs valida on, computes a endance percentages,
+determines eligibility, and manages communica on between the frontend and the
+database.
+This layer also ensures that opera ons such as a endance marking, data updates, and rule
+enforcement are executed reliably and consistently.
+Data Layer (Database System)
+The data layer consists of a rela onal database that stores all system data, including
+student records, faculty details, subject mappings, a endance logs, and marks. It ensures
+data integrity through structured rela onships and constraints.
+The interac on between these layers occurs through secure communica on protocols,
+ensuring that user ac ons are processed eﬃciently and data is retrieved or updated
+accurately.
+This layered architecture promotes separa on of concerns, allowing independent
+modiﬁca on and scalability of system components without aﬀec ng overall func onality.
+
+
+4.2 Detailed Design
+The detailed design of the system is based on object-oriented principles, ensuring
+modularity, reusability, and maintainability.
+The system is composed of several core en    es, each represen ng a real-world component
+of the a endance management process.
+
+
+Core Classes / En     es
+The major en     es in the system include:
+
+
+                                                   14
+25th Feb ,2026                                                                       Version 2.0
+
+
+       Student: Represents a student with a ributes such as name, enrollment number,
+        roll number, academic details, and associated subjects.
+       Faculty: Represents faculty members responsible for teaching subjects and marking
+        a endance.
+       Subject: Represents academic subjects linked to both students and faculty.
+       A endance: Represents a endance records for each student per subject per date.
+       Marks: Stores academic performance data for each student in speciﬁc subjects.
+       Rules: Deﬁnes a endance thresholds and eligibility criteria.
+Each en ty encapsulates its a ributes and interacts with other en      es through deﬁned
+rela onships, ensuring proper data ﬂow and consistency.
+
+
+
+
+                                   Fig 2: Class Diagram
+
+
+4.3 Sequence Diagrams
+
+                                                    15
+25th Feb ,2026                                                     Version 2.0
+
+
+
+
+4.3.1 Sequence Flow – Student Viewing A endance
+    1. Student logs into system
+    2. Request sent to backend
+    3. Backend fetches student subjects
+    4. Student selects subject
+    5. Backend retrieves a endance records
+    6. System calculates percentage and eligibility
+    7. Data returned and displayed
+
+
+
+
+                            Fig 3.1: Sequence Diagram – Students
+
+
+4.3.2 Sequence Flow – Faculty Marking A endance
+    1. Faculty logs in
+    2. Selects subject
+    3. Backend retrieves student list
+    4. A endance sheet displayed
+    5. Faculty marks a endance
+    6. Data sent to backend
+    7. Database updated
+
+                                                      16
+25th Feb ,2026                                                   Version 2.0
+
+
+    8. A endance recalculated
+
+
+
+
+                           Fig 3.2: Sequence Diagram - Faculty
+
+
+4.3.3 Sequence Flow – Admin Upda ng Data
+    1. Admin logs in
+    2. Selects data management
+    3. Inputs updated records
+    4. Backend validates data
+    5. Database updated
+    6. Conﬁrma on returned
+
+
+
+
+                                                17
+25th Feb ,2026                                                              Version 2.0
+
+
+
+
+                             Fig 3.3: Sequence Diagram – Admin
+
+
+
+    4.4 Database Schema
+The database is designed using a rela onal model with normalized en   es:
+
+
+
+
+                                                 18
+25th Feb ,2026                                   Version 2.0
+
+
+
+
+                            Fig 4: EER Diagram
+Students
+         student_id (PK)
+         name
+         enrollment_no
+         roll_no
+         year
+         branch
+         sec on
+Faculty
+
+
+                                          19
+25th Feb ,2026                                                              Version 2.0
+
+
+       faculty_id (PK)
+       name
+       employee_id
+       department
+Subjects
+       subject_id (PK)
+       subject_name
+       faculty_id (FK)
+Student_Subject
+       id (PK)
+       student_id (FK)
+       subject_id (FK)
+A endance
+       a endance_id (PK)
+       student_id (FK)
+       subject_id (FK)
+       date
+       status
+Marks
+       marks_id (PK)
+       student_id (FK)
+       subject_id (FK)
+       marks
+
+
+
+
+4.5 Security Design
+The Digital A endance Management System incorporates mul ple security mechanisms to
+ensure data conﬁden ality, integrity, and controlled access.
+
+
+4.5.1 Authen ca on and Authoriza on
+
+                                              20
+25th Feb ,2026                                                                   Version 2.0
+
+
+The system implements secure user authen ca on using creden al-based login
+mechanisms. Each user (student, faculty, administrator) is assigned a role, and access to
+system features is controlled through role-based access control (RBAC).
+       Students: Read-only access to personal data
+       Faculty: A endance marking and subject management
+       Admin: Full control over system data and permissions
+Session management techniques are used to maintain secure user sessions and prevent
+unauthorized access.
+
+
+4.5.2 Data Security Measures
+       Sensi ve data such as passwords are stored in encrypted form
+       Communica on between client and server is secured using HTTPS
+       Input valida on is performed to prevent invalid or malicious data
+
+
+4.5.3 Protec on Against Common A acks
+The system is designed to protect against common vulnerabili es:
+       SQL Injec on: Prevented using parameterized queries
+       Cross-Site Scrip ng (XSS): Prevented through input sani za on
+       Unauthorized Access: Prevented through strict role valida on
+
+
+4.5.4 Data Integrity
+The database enforces referen al integrity through primary and foreign key constraints.
+This ensures consistency in rela onships between students, subjects, and a endance
+records.
+
+
+
+5.0 Traceability
+Requirement        Requirement                 Design
+                                                           Design Ar fact
+ID                 Descrip on                  ID
+
+                   User authen ca on for                   Authen ca on        Module,
+FR-1                                           D-1
+                   all users                               Sequence Diagram (Login)
+
+
+
+
+                                                     21
+25th Feb ,2026                                                                   Version 2.0
+
+
+Requirement      Requirement                 Design
+                                                        Design Ar fact
+ID               Descrip on                  ID
+
+                 Student data storage and               Database Schema (Student
+FR-2                                         D-2
+                 management                             En ty), Admin Module
+
+                 Faculty data storage and               Database Schema (Faculty
+FR-3                                         D-3
+                 management                             En ty), Admin Module
+
+                 A endance marking by                   A endance Module, Sequence
+FR-4                                         D-4
+                 faculty                                Diagram (Faculty A endance)
+
+                 A endance percentage                   Calcula on     Logic,   Backend
+FR-5                                         D-5
+                 calcula on                             Processing
+
+                 Eligibility determina on               Rules Engine,       Calcula on
+FR-6                                         D-6
+                 based on thresholds                    Module
+
+                 Student       dashboard                UI   Dashboard,     Sequence
+FR-7                                         D-7
+                 display                                Diagram (Student View)
+
+                 Admin data upload and                  Admin Module, Sequence
+FR-8                                         D-8
+                 management                             Diagram (Admin Upload)
+
+                 Valida on of uploaded
+FR-9                                         D-9        Valida on Module
+                 data
+
+                 Storage of a endance                   Database Schema (A endance
+FR-10                                        D-10
+                 per lecture                            En ty)
+
+                                                        Database     Schema      (Marks
+FR-11            Storage of student marks    D-11
+                                                        En ty)
+
+                 Subject alloca on      to              Database Schema (Subject &
+FR-12                                        D-12
+                 students and faculty                   Mapping Tables)
+
+                 Role-based        access
+FR-13                                        D-13       Security Module
+                 control
+
+                 Conﬁgura on            of
+FR-14                                        D-14       Rules Module
+                 a endance rules
+
+                 Viewing       a endance
+FR-15                                        D-15       UI Module, Database Queries
+                 history
+
+
+
+6.0 Future Enhancements
+                                                   22
+25th Feb ,2026                                                                    Version 2.0
+
+
+The Digital A endance Management System, in its current form, provides a comprehensive
+solu on for managing student a endance, academic tracking, and administra ve control
+within a college environment. However, there are several areas where the system can be
+further enhanced to improve func onality, usability, and scalability in future versions.
+One poten al enhancement involves the integra on of automated a endance marking
+mechanisms. Instead of relying solely on manual input by faculty members, the system can
+be extended to support technologies such as QR code-based a endance or biometric
+veriﬁca on systems. This would signiﬁcantly reduce manual eﬀort and improve the
+accuracy and authen city of a endance records.
+Another important enhancement is the introduc on of advanced analy cs and repor ng
+features. The system can be expanded to generate detailed reports on student a endance
+trends, subject-wise performance, and overall academic progress. These analy cs can assist
+faculty and administrators in iden fying pa erns, such as consistently low a endance in
+speciﬁc subjects or at-risk students, enabling mely interven on.The system can also be
+enhanced by incorpora ng a no ﬁca on and alert mechanism. Students can receive
+automated alerts regarding low a endance percentages, approaching eligibility
+thresholds, or upcoming academic deadlines. Similarly, faculty and administrators can be
+no ﬁed about irregular a endance pa erns or data inconsistencies, ensuring proac ve
+system usage.
+In terms of user experience, the system can be extended to include a mobile applica on
+interface. A dedicated mobile pla orm would provide greater accessibility and convenience,
+allowing users to access a endance data and perform necessary opera ons on handheld
+devices. This would be par cularly beneﬁcial for students who frequently rely on mobile
+devices for academic updates.
+Another area of improvement is the enhancement of data import and export capabili es.
+The current system can be extended to support bulk data handling through structured ﬁle
+formats such as spreadsheets, enabling administrators to eﬃciently manage large
+datasets. Addi onally, expor ng a endance and performance reports in formats such as
+PDF or CSV can improve usability for record-keeping and repor ng purposes.
+From a security perspec ve, future versions of the system can incorporate advanced
+authen ca on mechanisms such as mul -factor authen ca on. This would enhance
+system security and ensure that sensi ve academic data is protected against unauthorized
+access.
+Finally, the system can be designed to support integra on with other academic tools and
+pla orms used within the ins tu on, such as metable systems or internal portals. While
+the current system operates independently, such integra ons can improve overall workﬂow
+eﬃciency and data consistency across pla orms.
+These enhancements, when implemented, would signiﬁcantly improve the system’s
+capability, making it more robust, user-friendly, and adaptable to evolving academic
+requirements.
+
+                                                  23
+
