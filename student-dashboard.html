@@ -63,7 +63,7 @@
             <div class="flex gap-3">
                 <div class="text-right hidden sm:block">
                     <p class="text-xs font-bold text-slate-400 uppercase">Branch & Year</p>
-                    <p class="text-sm font-semibold text-slate-700">Computer Science | 3rd Year</p><!--  replace with actual student branch and year -->
+                    <p id="branchYear" class="text-sm font-semibold text-slate-700"></p>
                 </div>
                 <div class="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-xl flex items-center gap-2">
                     <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
@@ -187,7 +187,17 @@ async function loadStudentData() {
     if (student) {
         document.getElementById("studentName").innerText = student.name;
         document.getElementById("enrollment").innerText = "EN: " + student.enrollment_no;
-document.getElementById("roll").innerText = "Roll: " + student.roll_no;
+        document.getElementById("roll").innerText = "Roll: " + student.roll_no;
+                function formatYear(year) {
+            if (year == 1) return "1st Year";
+            if (year == 2) return "2nd Year";
+            if (year == 3) return "3rd Year";
+            if (year == 4) return "4th Year";
+            return year + " Year";
+        }
+
+        document.getElementById("branchYear").innerText =
+            `${student.branch} | ${formatYear(student.year)}`;
         // 2. Get attendance using student_id
         const attRes = await fetch(`${API_BASE}/api/attendance/${student.student_id}`);
         const attendance = await attRes.json();
