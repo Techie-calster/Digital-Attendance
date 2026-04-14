@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Digital Attendance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-900">
+    <main class="mx-auto max-w-7xl p-4 lg:p-8 space-y-6">
+        <header class="rounded-[2rem] bg-slate-900 p-6 text-white shadow-xl">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-[0.35em] text-slate-400">Administrator</p>
+                    <h1 class="mt-2 text-3xl font-extrabold">System Control Panel</h1>
+                    <p id="adminName" class="mt-2 text-sm text-slate-300">Loading administrator profile...</p>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <button onclick="loadDashboard(true)" class="rounded-2xl bg-white px-5 py-3 text-sm font-bold text-slate-800">Refresh Data</button>
+                    <button onclick="logoutAdmin()" class="rounded-2xl bg-red-500 px-5 py-3 text-sm font-bold text-white">Logout</button>
+                </div>
+            </div>
+            <div id="banner" class="mt-5 hidden rounded-2xl border px-4 py-3 text-sm font-medium"></div>
+        </header>
+
+        <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <div class="rounded-[1.7rem] bg-white p-5 shadow-sm">
+                <p class="text-xs font-black uppercase tracking-[0.28em] text-slate-400">Students</p>
+                <p id="studentCount" class="mt-3 text-4xl font-black">0</p>
+            </div>
+            <div class="rounded-[1.7rem] bg-white p-5 shadow-sm">
+                <p class="text-xs font-black uppercase tracking-[0.28em] text-slate-400">Faculty</p>
+                <p id="facultyCount" class="mt-3 text-4xl font-black">0</p>
+            </div>
+            <div class="rounded-[1.7rem] bg-white p-5 shadow-sm">
+                <p class="text-xs font-black uppercase tracking-[0.28em] text-slate-400">Subjects</p>
+                <p id="subjectCount" class="mt-3 text-4xl font-black">0</p>
+            </div>
+            <div class="rounded-[1.7rem] bg-white p-5 shadow-sm">
+                <p class="text-xs font-black uppercase tracking-[0.28em] text-slate-400">Assignments</p>
+                <p id="assignmentCount" class="mt-3 text-4xl font-black">0</p>
+            </div>
+        </section>
+
+        <section class="grid gap-6 xl:grid-cols-[1.2fr,1fr]">
+            <div class="rounded-[2rem] bg-white p-6 shadow-sm">
+                <p class="text-xs font-bold uppercase tracking-[0.35em] text-slate-400">Attendance Rules</p>
+                <h2 class="mt-2 text-2xl font-extrabold">Threshold Configuration</h2>
+                <form id="rulesForm" class="mt-6 grid gap-4 md:grid-cols-3">
+                    <label class="text-sm font-semibold text-slate-600">
+                        Eligibility
+                        <input id="eligibility_threshold" type="number" min="1" max="100" class="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3">
+                    </label>
+                    <label class="text-sm font-semibold text-slate-600">
+                        Warning
+                        <input id="warning_threshold" type="number" min="1" max="100" class="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3">
+                    </label>
+                    <label class="text-sm font-semibold text-slate-600">
+                        High
+                        <input id="high_threshold" type="number" min="1" max="100" class="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3">
+                    </label>
+                    <button class="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-bold text-white md:col-span-3" type="submit">
+                        Save Attendance Rules
+                    </button>
+                </form>
+            </div>
+
+            <div class="rounded-[2rem] bg-white p-6 shadow-sm">
+                <p class="text-xs font-bold uppercase tracking-[0.35em] text-slate-400">Subject Mapping</p>
+                <h2 class="mt-2 text-2xl font-extrabold">Assign Subject to Student</h2>
+                <form id="assignForm" class="mt-6 space-y-4">
+                    <label class="block text-sm font-semibold text-slate-600">
+                        Student
+                        <select id="assign_student_id" class="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3"></select>
+                    </label>
+                    <label class="block text-sm font-semibold text-slate-600">
+                        Subject
+                        <select id="assign_subject_id" class="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3"></select>
+                    </label>
+                    <button class="w-full rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-bold text-white" type="submit">
+                        Assign Subject
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <section class="grid gap-6 xl:grid-cols-3">
+            <div class="rounded-[2rem] bg-white p-6 shadow-sm">
+                <h2 class="text-xl font-extrabold">Add Student</h2>
+                <form id="studentForm" class="mt-5 space-y-3">
+                    <input name="name" placeholder="Student name" class="w-full rounded-2xl border border-slate-200 px-4 py-3" required>
+                    <input name="enrollment_no" placeholder="Enrollment number" class="w-full rounded-2xl border border-slate-200 px-4 py-3" required>
+                    <input name="roll_no" placeholder="Roll number" class="w-full rounded-2xl border border-slate-200 px-4 py-3" required>
+                    <input name="year" type="number" min="1" max="4" placeholder="Year" class="w-full rounded-2xl border border-slate-200 px-4 py-3" required>
+                    <input name="branch" placeholder="Branch" class="w-full rounded-2xl border border-slate-200 px-4 py-3" required>
+                    <input name="section" placeholder="Section" class="w-full rounded-2xl border border-slate-200 px-4 py-3" required>
+                    <input name="password" type="password" placeholder="Password" class="w-full rounded-2xl border border-slate-200 px-4 py-3" required>
+                    <button class="w-full rounded-2xl bg-slate-900 px-5 py-3 text-sm font-bold text-white" type="submit">Create Student</button>
+                </form>
+            </div>
+
+            <div class="rounded-[2rem] bg-white p-6 shadow-sm">
+                <h2 class="text-xl font-extrabold">Add Faculty</h2>
+                <form id="facultyForm" class="mt-5 space-y-3">
+                    <input name="name" placeholder="Faculty name" class="w-full rounded-2xl border border-slate-200 px-4 py-3" required>
+                    <input name="employee_id" placeholder="Employee ID" class="w-full rounded-2xl border border-slate-200 px-4 py-3" required>
+                    <input name="department" placeholder="Department" class="w-full rounded-2xl border border-slate-200 px-4 py-3" required>
+                    <input name="password" type="password" placeholder="Password" class="w-full rounded-2xl border border-slate-200 px-4 py-3" required>
+                    <button class="w-full rounded-2xl bg-slate-900 px-5 py-3 text-sm font-bold text-white" type="submit">Create Faculty</button>
+                </form>
+            </div>
+
+            <div class="rounded-[2rem] bg-white p-6 shadow-sm">
+                <h2 class="text-xl font-extrabold">Add Subject</h2>
+                <form id="subjectForm" class="mt-5 space-y-3">
+                    <input name="subject_name" placeholder="Subject name" class="w-full rounded-2xl border border-slate-200 px-4 py-3" required>
+                    <select name="faculty_id" id="subjectFacultySelect" class="w-full rounded-2xl border border-slate-200 px-4 py-3" required></select>
+                    <button class="w-full rounded-2xl bg-slate-900 px-5 py-3 text-sm font-bold text-white" type="submit">Create Subject</button>
+                </form>
+            </div>
+        </section>
+
+        <section class="grid gap-6 xl:grid-cols-3">
+            <div class="rounded-[2rem] bg-white p-6 shadow-sm">
+                <h2 class="text-xl font-extrabold">Students</h2>
+                <div id="studentTable" class="mt-5 space-y-3 text-sm text-slate-600"></div>
+            </div>
+            <div class="rounded-[2rem] bg-white p-6 shadow-sm">
+                <h2 class="text-xl font-extrabold">Faculty</h2>
+                <div id="facultyTable" class="mt-5 space-y-3 text-sm text-slate-600"></div>
+            </div>
+            <div class="rounded-[2rem] bg-white p-6 shadow-sm">
+                <h2 class="text-xl font-extrabold">Subjects</h2>
+                <div id="subjectTable" class="mt-5 space-y-3 text-sm text-slate-600"></div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const API_BASE = window.location.protocol.startsWith('http')
+            ? `${window.location.protocol}//${window.location.hostname || '127.0.0.1'}:5000`
+            : 'http://127.0.0.1:5000';
+
+        const state = {
+            students: [],
+            faculty: [],
+            subjects: [],
+        };
+
+        function banner(message = '', tone = 'info') {
+            const node = document.getElementById('banner');
+            if (!message) {
+                node.className = 'mt-5 hidden rounded-2xl border px-4 py-3 text-sm font-medium';
+                node.textContent = '';
+                return;
+            }
+            const styles = tone === 'success'
+                ? 'mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700'
+                : tone === 'error'
+                ? 'mt-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700'
+                : 'mt-5 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-medium text-blue-700';
+            node.className = styles;
+            node.textContent = message;
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        async function fetchJson(path, options = {}) {
+            const response = await fetch(`${API_BASE}${path}`, {
+                credentials: 'same-origin',
+                ...options,
+            });
+            const payload = await response.json().catch(() => null);
+            if (!response.ok || (payload && payload.status === 'error')) {
+                throw new Error(payload?.message || `Request failed with status ${response.status}`);
+            }
+            return payload;
+        }
+
+        function populateOptions() {
+            const studentOptions = state.students.map((student) => `
+                <option value="${student.student_id}">
+                    ${escapeHtml(student.roll_no)} - ${escapeHtml(student.name)}
+                </option>
+            `).join('');
+            const facultyOptions = state.faculty.map((member) => `
+                <option value="${member.faculty_id}">
+                    ${escapeHtml(member.employee_id)} - ${escapeHtml(member.name)}
+                </option>
+            `).join('');
+            const subjectOptions = state.subjects.map((subject) => `
+                <option value="${subject.subject_id}">
+                    ${escapeHtml(subject.subject_name)}
+                </option>
+            `).join('');
+
+            document.getElementById('assign_student_id').innerHTML = studentOptions;
+            document.getElementById('assign_subject_id').innerHTML = subjectOptions;
+            document.getElementById('subjectFacultySelect').innerHTML = facultyOptions;
+        }
+
+        function renderTables() {
+            document.getElementById('studentTable').innerHTML = state.students.map((student) => `
+                <div class="rounded-2xl border border-slate-200 px-4 py-3">
+                    <p class="font-semibold text-slate-800">${escapeHtml(student.name)}</p>
+                    <p>${escapeHtml(student.enrollment_no)} • ${escapeHtml(student.branch)} Y${escapeHtml(student.year)} ${escapeHtml(student.section)}</p>
+                </div>
+            `).join('');
+
+            document.getElementById('facultyTable').innerHTML = state.faculty.map((member) => `
+                <div class="rounded-2xl border border-slate-200 px-4 py-3">
+                    <p class="font-semibold text-slate-800">${escapeHtml(member.name)}</p>
+                    <p>${escapeHtml(member.employee_id)} • ${escapeHtml(member.department)}</p>
+                </div>
+            `).join('');
+
+            document.getElementById('subjectTable').innerHTML = state.subjects.map((subject) => `
+                <div class="rounded-2xl border border-slate-200 px-4 py-3">
+                    <p class="font-semibold text-slate-800">${escapeHtml(subject.subject_name)}</p>
+                    <p>${escapeHtml(subject.faculty_name || 'Faculty not assigned')}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderSummary(summary) {
+            document.getElementById('studentCount').textContent = summary.students ?? 0;
+            document.getElementById('facultyCount').textContent = summary.faculty ?? 0;
+            document.getElementById('subjectCount').textContent = summary.subjects ?? 0;
+            document.getElementById('assignmentCount').textContent = summary.assignments ?? 0;
+        }
+
+        async function loadDashboard(showMessage = false) {
+            try {
+                const sessionState = await fetchJson('/api/session');
+                if (!sessionState.data?.authenticated || sessionState.data?.role !== 'admin') {
+                    window.location.href = 'admin-login.html';
+                    return;
+                }
+
+                document.getElementById('adminName').textContent = sessionState.data.display_name || 'Administrator';
+
+                const [summary, rules, students, faculty, subjects] = await Promise.all([
+                    fetchJson('/api/admin/dashboard-summary'),
+                    fetchJson('/api/admin/rules'),
+                    fetchJson('/api/admin/students'),
+                    fetchJson('/api/admin/faculty'),
+                    fetchJson('/api/admin/subjects'),
+                ]);
+
+                renderSummary(summary.data || {});
+                document.getElementById('eligibility_threshold').value = rules.data.eligibility_threshold;
+                document.getElementById('warning_threshold').value = rules.data.warning_threshold;
+                document.getElementById('high_threshold').value = rules.data.high_threshold;
+
+                state.students = students.data || [];
+                state.faculty = faculty.data || [];
+                state.subjects = subjects.data || [];
+
+                populateOptions();
+                renderTables();
+
+                if (showMessage) banner('Dashboard refreshed successfully.', 'success');
+            } catch (error) {
+                banner(error.message || 'Dashboard could not be loaded.', 'error');
+            }
+        }
+
+        async function postForm(path, form, successMessage) {
+            const formData = new FormData(form);
+            const body = Object.fromEntries(formData.entries());
+            await fetchJson(path, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+            });
+            form.reset();
+            await loadDashboard(false);
+            banner(successMessage, 'success');
+        }
+
+        async function saveRules(event) {
+            event.preventDefault();
+            const body = {
+                eligibility_threshold: Number(document.getElementById('eligibility_threshold').value),
+                warning_threshold: Number(document.getElementById('warning_threshold').value),
+                high_threshold: Number(document.getElementById('high_threshold').value),
+            };
+            await fetchJson('/api/admin/rules', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+            });
+            banner('Attendance rules saved successfully.', 'success');
+        }
+
+        async function assignSubject(event) {
+            event.preventDefault();
+            const body = {
+                student_id: Number(document.getElementById('assign_student_id').value),
+                subject_id: Number(document.getElementById('assign_subject_id').value),
+            };
+            await fetchJson('/api/admin/assign-subject', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+            });
+            banner('Subject assigned successfully.', 'success');
+        }
+
+        async function logoutAdmin() {
+            try {
+                await fetchJson('/api/logout', { method: 'POST' });
+            } catch (error) {
+                console.error(error);
+            }
+            localStorage.removeItem('userId');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('role');
+            window.location.href = 'admin-login.html';
+        }
+
+        document.getElementById('rulesForm').addEventListener('submit', (event) => {
+            saveRules(event).catch((error) => banner(error.message, 'error'));
+        });
+        document.getElementById('studentForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            postForm('/api/admin/students', event.currentTarget, 'Student created successfully.').catch((error) => banner(error.message, 'error'));
+        });
+        document.getElementById('facultyForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            postForm('/api/admin/faculty', event.currentTarget, 'Faculty member created successfully.').catch((error) => banner(error.message, 'error'));
+        });
+        document.getElementById('subjectForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            postForm('/api/admin/subjects', event.currentTarget, 'Subject created successfully.').catch((error) => banner(error.message, 'error'));
+        });
+        document.getElementById('assignForm').addEventListener('submit', (event) => {
+            assignSubject(event).catch((error) => banner(error.message, 'error'));
+        });
+
+        window.addEventListener('DOMContentLoaded', () => loadDashboard(false));
+    </script>
+</body>
+</html>

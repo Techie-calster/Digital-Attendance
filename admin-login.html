@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Console | Infrastructure Root</title>
+    <title>Admin Console | Digital Attendance</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
         :root {
             --admin-bg: #020617;
@@ -18,21 +17,21 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             background-color: var(--admin-bg);
-            /* Subtle grid pattern background for a "system" feel */
             background-image: radial-gradient(#1e293b 1px, transparent 1px);
             background-size: 30px 30px;
             font-family: 'Poppins', sans-serif;
             color: white;
+            padding: 1.5rem;
         }
 
         .admin-card {
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             background: var(--card-slate);
             padding: 3rem 2.5rem;
             border-radius: 16px;
@@ -41,18 +40,20 @@
             position: relative;
         }
 
-        /* Glow effect at the top */
         .admin-card::before {
             content: '';
             position: absolute;
-            top: -1px; left: 50%; transform: translateX(-50%);
-            width: 80%; height: 2px;
+            top: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 2px;
             background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
         }
 
         .header {
             text-align: center;
-            margin-bottom: 2.5rem;
+            margin-bottom: 2rem;
         }
 
         .admin-icon {
@@ -76,9 +77,8 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
-        /* Form Logic */
         .form-group { margin-bottom: 1.5rem; }
-        
+
         .label {
             display: block;
             font-size: 0.7rem;
@@ -139,32 +139,52 @@
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
         }
 
-        .security-notice {
-            margin-top: 2rem;
+        .footer-links {
+            margin-top: 1.5rem;
             text-align: center;
-            font-size: 0.65rem;
-            color: #475569;
-            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
+        .footer-links a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            padding: 0.85rem 1rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        .message.error {
+            display: block;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            color: #fecaca;
         }
     </style>
 </head>
 <body>
-
     <div class="admin-card">
         <div class="header">
             <div class="admin-icon">
                 <i class="fa-solid fa-user-shield"></i>
             </div>
             <h1>Admin Console</h1>
-            <p>Authorization Required [v3.0]</p>
+            <p>Secure data and rule management</p>
         </div>
 
-        <form>
+        <div id="message" class="message"></div>
+
+        <form onsubmit="performAdminLogin(event)">
             <div class="form-group">
                 <label class="label">System Identity</label>
                 <div class="input-wrapper">
                     <i class="fa-solid fa-terminal icon"></i>
-                    <input type="text" class="admin-input" placeholder="root_user" required>
+                    <input id="username" type="text" class="admin-input" placeholder="admin" required>
                 </div>
             </div>
 
@@ -172,7 +192,7 @@
                 <label class="label">Access Key</label>
                 <div class="input-wrapper">
                     <i class="fa-solid fa-key icon"></i>
-                    <input type="password" class="admin-input" placeholder="••••••••" required>
+                    <input id="password" type="password" class="admin-input" placeholder="Enter admin password" required>
                 </div>
             </div>
 
@@ -181,10 +201,48 @@
             </button>
         </form>
 
-        <div class="security-notice">
-            IP Address Logged. Unauthorized attempts are reported to university IT.
+        <div class="footer-links">
+            Default local credentials: <strong>admin / Admin@123</strong><br>
+            <a href="ram_landing.html">Back to Home</a>
         </div>
     </div>
-    
+
+    <script>
+        const API_BASE = window.location.protocol.startsWith('http')
+            ? `${window.location.protocol}//${window.location.hostname || '127.0.0.1'}:5000`
+            : 'http://127.0.0.1:5000';
+
+        function showMessage(message) {
+            const node = document.getElementById('message');
+            node.textContent = message;
+            node.className = 'message error';
+        }
+
+        async function performAdminLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/login`, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password }),
+                });
+                const payload = await response.json();
+                if (!response.ok || payload.status === 'error') {
+                    throw new Error(payload.message || 'Admin login failed.');
+                }
+
+                localStorage.setItem('role', 'admin');
+                localStorage.setItem('userId', payload.data.username);
+                localStorage.setItem('userName', payload.data.display_name);
+                window.location.href = payload.data.redirect;
+            } catch (error) {
+                showMessage(error.message || 'Admin login failed.');
+            }
+        }
+    </script>
 </body>
 </html>

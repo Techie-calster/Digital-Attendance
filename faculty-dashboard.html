@@ -247,12 +247,23 @@
 		};
 	}
 	async function j(url, opt = {}) {
-		const response = await fetch(API + url, opt);
+		const response = await fetch(API + url, { credentials: "same-origin", ...opt });
 		const payload = await response.json().catch(() => ({}));
 		if (!response.ok || payload.status === "error") {
 			throw new Error(payload.message || `Request failed with status ${response.status}`);
 		}
 		return payload;
+	}
+	async function loadRules() {
+		try {
+			const response = await j("/api/rules");
+			const rules = response.data || {};
+			THRESHOLDS.eligible = Number(rules.eligibility_threshold || THRESHOLDS.eligible);
+			THRESHOLDS.warning = Number(rules.warning_threshold || THRESHOLDS.warning);
+			THRESHOLDS.high = Number(rules.high_threshold || THRESHOLDS.high);
+		} catch (error) {
+			console.error(error);
+		}
 	}
 	function goToLogin() {
 		location.href = "login.html";
@@ -574,8 +585,13 @@ async function refreshDashboard(showMessage) {
 		el.subjectsContainer.innerHTML = `<div class='xl:col-span-2 rounded-[1.5rem] border border-dashed border-red-200 bg-red-50 px-5 py-10 text-center text-sm text-red-600'>Dashboard data could not be loaded. Check whether the Flask server is running on ${esc(API)}.</div>`;
 	}
 }
-function logoutUser(event) {
+async function logoutUser(event) {
 	event.preventDefault();
+	try {
+		await j("/api/logout", { method: "POST" });
+	} catch (error) {
+		console.error(error);
+	}
 	localStorage.removeItem("userId");
 	localStorage.removeItem("userName");
 	localStorage.removeItem("role");
@@ -617,6 +633,7 @@ async function init() {
 		goToLogin();
 		return;
 	}
+	await loadRules();
 	el.todayLabel.textContent = new Date().toLocaleDateString(undefined, {
 		day: "numeric",
 		month: "short",

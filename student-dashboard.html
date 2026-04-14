@@ -14,7 +14,6 @@
     </style>
 </head>
 <body class="flex min-h-screen">
-
     <aside class="w-64 bg-white border-r border-slate-200 hidden lg:flex flex-col">
         <div class="p-6 flex items-center gap-3">
             <div class="bg-blue-600 p-2 rounded-lg text-white">
@@ -22,44 +21,37 @@
             </div>
             <span class="text-xl font-bold text-slate-900 tracking-tight">Digital<span class="text-blue-600">Atnd</span></span>
         </div>
-        
+
         <nav class="flex-1 px-4 space-y-2 mt-4">
             <a href="#" class="sidebar-link flex items-center gap-3 p-3 rounded-xl text-blue-600 bg-blue-50 font-semibold">
                 <i class="fa-solid fa-house"></i> Overview
             </a>
-            <!-- <a href="#" class="sidebar-link flex items-center gap-3 p-3 rounded-xl text-slate-500 transition">
-                <i class="fa-solid fa-book"></i> <!-- My Subjects -->
-            <!-- </a>
-            <a href="#" class="sidebar-link flex items-center gap-3 p-3 rounded-xl text-slate-500 transition">
-                <i class="fa-solid fa-calendar-check"></i> <!-- History -->
-            <!-- </a> -->
         </nav>
 
         <div class="p-4 border-t">
-            <a href="login.html" class="flex items-center gap-3 p-3 text-red-500 font-medium hover:bg-red-50 rounded-xl transition">
+            <a id="logoutLink" href="login.html" class="flex items-center gap-3 p-3 text-red-500 font-medium hover:bg-red-50 rounded-xl transition">
                 <i class="fa-solid fa-right-from-bracket"></i> Logout
             </a>
         </div>
     </aside>
 
     <main class="flex-1 p-4 lg:p-8 overflow-y-auto">
-        
         <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div class="flex items-center gap-5">
-               <div class="w-20 h-20 rounded-2xl bg-slate-200 overflow-hidden border-4 border-white shadow-sm">
-    <div class="w-full h-full flex items-center justify-center text-slate-400">
-        <i class="fa-solid fa-user text-3xl"></i>
-    </div>
-</div>
+                <div class="w-20 h-20 rounded-2xl bg-slate-200 overflow-hidden border-4 border-white shadow-sm">
+                    <div class="w-full h-full flex items-center justify-center text-slate-400">
+                        <i class="fa-solid fa-user text-3xl"></i>
+                    </div>
+                </div>
                 <div>
                     <h1 id="studentName" class="text-2xl font-bold text-slate-900"></h1>
-                            <div class="flex flex-wrap gap-x-4 text-sm text-slate-500 font-medium">
-            <span id="enrollment"></span>
-            <span id="roll"></span>
-        </div>
+                    <div class="flex flex-wrap gap-x-4 text-sm text-slate-500 font-medium">
+                        <span id="enrollment"></span>
+                        <span id="roll"></span>
+                    </div>
                 </div>
             </div>
-            
+
             <div class="flex gap-3">
                 <div class="text-right hidden sm:block">
                     <p class="text-xs font-bold text-slate-400 uppercase">Branch & Year</p>
@@ -76,28 +68,17 @@
             <div class="glass-card p-6 rounded-3xl shadow-sm relative overflow-hidden">
                 <p class="text-slate-500 text-sm font-semibold mb-1">Overall Attendance</p>
                 <h2 id="attendance" class="text-4xl font-black text-slate-900">--%</h2>
-<p class="mt-2 text-sm text-slate-500">
-    Present: <span id="present">--</span> /
-    Total: <span id="total">--</span>
-</p>
+                <p class="mt-2 text-sm text-slate-500">
+                    Present: <span id="present">--</span> /
+                    Total: <span id="total">--</span>
+                </p>
                 <div class="mt-4 w-full bg-slate-100 h-2 rounded-full overflow-hidden">
                     <div id="progressBar" class="bg-blue-600 h-full" style="width: 0%"></div>
                 </div>
-                <p class="mt-3 text-xs text-blue-600 font-bold tracking-wide">
+                <p id="overallEligibility" class="mt-3 text-xs text-blue-600 font-bold tracking-wide">
                     <i class="fa-solid fa-circle-info"></i> Currently Eligible
                 </p>
             </div>
-
-            <!-- <div class="glass-card p-6 rounded-3xl shadow-sm border-l-4 border-amber-400">
-                <p class="text-slate-500 text-sm font-semibold mb-1">Internal Marks Earned</p>
-                <div class="flex items-baseline gap-2">
-                   <h2 id="marks" class="text-4xl font-black text-slate-900">--</h2>
-                   <span class="text-slate-400 font-bold">Marks</span>
-                </div>
-                <p class="mt-4 text-xs text-slate-500 leading-relaxed">
-                    Maintain <span class="text-slate-900 font-bold">88%</span> to reach the <span class="text-emerald-600 font-bold">6 Mark</span> tier.
-                </p>
-            </div> -->
 
             <div class="bg-slate-900 p-6 rounded-3xl shadow-xl text-white">
                 <p class="text-slate-400 text-sm font-semibold mb-1">Decision Support</p>
@@ -106,258 +87,276 @@
                     <i class="fa-solid fa-triangle-exclamation"></i>
                     <p id="skipText" class="text-sm font-medium">--</p>
                 </div>
-                <p class="mt-2 text-[10px] text-slate-500 uppercase tracking-widest font-bold">Based on 67% threshold</p>
+                <p class="mt-2 text-[10px] text-slate-500 uppercase tracking-widest font-bold">Based on the eligibility threshold</p>
             </div>
         </div>
 
         <h2 class="text-xl font-bold text-slate-900 mb-6">Subject Breakdown</h2>
         <div id="subjectsContainer" class="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-4 gap-2"></div>
     </main>
- <div id="subjectModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
-    <div class="bg-white p-6 rounded-xl w-96 shadow-lg relative">
-        
-        <h2 id="modalSubjectName" class="text-xl font-bold mb-4 text-center"></h2>
 
-        <div class="space-y-2 text-sm text-slate-700">
-            <p><b>Attendance:</b> <span id="modalAttendance"></span></p>
-            <p><b>Present:</b> <span id="modalPresent"></span></p>
-            <p><b>Total Classes:</b> <span id="modalTotal"></span></p>
-            <p><b>Marks:</b> <span id="modalMarks"></span></p>
+    <div id="subjectModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-xl w-96 shadow-lg relative">
+            <h2 id="modalSubjectName" class="text-xl font-bold mb-4 text-center"></h2>
+
+            <div class="space-y-2 text-sm text-slate-700">
+                <p><b>Attendance:</b> <span id="modalAttendance"></span></p>
+                <p><b>Present:</b> <span id="modalPresent"></span></p>
+                <p><b>Total Classes:</b> <span id="modalTotal"></span></p>
+                <p><b>Marks:</b> <span id="modalMarks"></span></p>
+            </div>
+
+            <div class="mt-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-2">Attendance History</p>
+                <div id="modalHistory" class="max-h-48 overflow-y-auto rounded-lg border border-slate-200 divide-y divide-slate-100 text-sm text-slate-600">
+                    <div class="px-3 py-3 text-slate-400">Select a subject to load history.</div>
+                </div>
+            </div>
+
+            <button onclick="closeModal()"
+                class="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
+                Close
+            </button>
+
+            <button onclick="closeModal()"
+                class="absolute top-2 right-2 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
         </div>
-
-        <button onclick="closeModal()" 
-            class="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
-            Close
-        </button>
-        
-        <button onclick="closeModal()" 
-            class="absolute top-2 right-2 text-slate-400 hover:text-slate-600">
-            <i class="fa-solid fa-xmark text-xl"></i>
-        </button>
     </div>
-</div>
+
 <script>
 const API_BASE = window.location.protocol.startsWith('http')
     ? `${window.location.protocol}//${window.location.hostname || '127.0.0.1'}:5000`
     : 'http://127.0.0.1:5000';
 
-     // MARKS (UPDATED LOGIC)
-function calculateMarks(percentage) {
-    if (percentage < 67) return 0;
-    else if (percentage < 70) return 1.2;
-    else if (percentage < 75) return 2.4;
-    else if (percentage < 80) return 3.6;
-    else if (percentage < 85) return 4.8;
-    else return 6;
+const state = {
+    rules: {
+        eligibility_threshold: 67,
+        warning_threshold: 75,
+        high_threshold: 85,
+    },
+    student: null,
+    attendanceMap: {},
+    subjectMap: {},
+};
+
+function formatYear(year) {
+    if (year === 1) return "1st Year";
+    if (year === 2) return "2nd Year";
+    if (year === 3) return "3rd Year";
+    if (year === 4) return "4th Year";
+    return `${year} Year`;
 }
 
-//calculateMARKS
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
+async function fetchJson(path, options = {}) {
+    const response = await fetch(`${API_BASE}${path}`, {
+        credentials: 'same-origin',
+        ...options,
+    });
+    const payload = await response.json().catch(() => null);
+    if (!response.ok || (payload && payload.status === "error")) {
+        throw new Error(payload?.message || `Request failed with status ${response.status}`);
+    }
+    return payload;
+}
+
 function calculateSkip(present, total) {
     if (total === 0) return 0;
-
-    const maxSkip = Math.floor(((present / 0.67) - total) + 0.0001);
-
+    const threshold = (state.rules.eligibility_threshold || 67) / 100;
+    const maxSkip = Math.floor(((present / threshold) - total) + 0.0001);
     return maxSkip < 0 ? 0 : maxSkip;
 }
-function viewDetails(subjectName, percentage, present, total, marks) {
-    document.getElementById("modalSubjectName").innerText = subjectName;
-    document.getElementById("modalAttendance").innerText = percentage + "%";
-    document.getElementById("modalPresent").innerText = present;
-    document.getElementById("modalTotal").innerText = total;
-    document.getElementById("modalMarks").innerText = marks;
 
+function updateOverview(attendance) {
+    const percentage = attendance?.total_classes ? attendance.percentage : 0;
+    const present = attendance?.present ?? 0;
+    const total = attendance?.total_classes ?? 0;
+    const skip = calculateSkip(present, total);
+    const eligible = percentage >= (state.rules.eligibility_threshold || 67);
+
+    document.getElementById("attendance").innerText = total > 0 ? `${percentage}%` : "--";
+    document.getElementById("progressBar").style.width = total > 0 ? `${percentage}%` : "0%";
+    document.getElementById("present").innerText = total > 0 ? present : "--";
+    document.getElementById("total").innerText = total > 0 ? total : "--";
+    document.getElementById("skipText").innerText = total === 0
+        ? "No data available yet."
+        : skip === 0
+        ? "Attendance is tight right now. Avoid skipping the next class."
+        : skip === 1
+        ? "You can safely skip 1 lecture."
+        : `You can safely skip ${skip} lectures.`;
+
+    const eligibilityNode = document.getElementById("overallEligibility");
+    eligibilityNode.className = `mt-3 text-xs font-bold tracking-wide ${eligible ? 'text-blue-600' : 'text-red-600'}`;
+    eligibilityNode.innerHTML = `<i class="fa-solid fa-circle-info"></i> ${eligible ? 'Currently Eligible' : 'Below Eligibility Threshold'}`;
+}
+
+function renderSubjects(subjects) {
+    const container = document.getElementById("subjectsContainer");
+    container.innerHTML = "";
+
+    if (!subjects.length) {
+        container.innerHTML = `
+            <div class="col-span-full text-center text-slate-400">
+                No subjects assigned yet
+            </div>
+        `;
+        return;
+    }
+
+    const ordered = [...subjects].sort((left, right) => {
+        const leftAttendance = state.attendanceMap[left.subject_id] || { percentage: 0 };
+        const rightAttendance = state.attendanceMap[right.subject_id] || { percentage: 0 };
+        return leftAttendance.percentage - rightAttendance.percentage;
+    });
+
+    ordered.forEach((subject) => {
+        const attendance = state.attendanceMap[subject.subject_id] || {
+            present: 0,
+            total: 0,
+            percentage: 0,
+        };
+        const skip = calculateSkip(attendance.present, attendance.total);
+        const marks = Number(subject.marks ?? 0).toFixed(2);
+        const facultyName = subject.subjects.faculty?.name || "Not assigned";
+
+        let color = "text-gray-400 bg-gray-100";
+        if (attendance.total > 0) {
+            if (attendance.percentage >= (state.rules.high_threshold || 85)) color = "text-emerald-600 bg-emerald-50";
+            else if (attendance.percentage >= (state.rules.warning_threshold || 75)) color = "text-blue-600 bg-blue-50";
+            else if (attendance.percentage >= (state.rules.eligibility_threshold || 67)) color = "text-amber-600 bg-amber-50";
+            else color = "text-red-600 bg-red-50";
+        }
+
+        container.innerHTML += `
+            <div class="bg-white p-5 rounded-2xl border shadow-sm">
+                <h3 class="font-bold text-slate-800 mb-1">${escapeHtml(subject.subjects.subject_name)}</h3>
+                <p class="text-xs text-slate-400 mb-2">Faculty: ${escapeHtml(facultyName)}</p>
+                <div class="flex justify-between mb-2">
+                    <span class="px-2 py-1 text-xs font-bold rounded ${color}">
+                        ${attendance.total > 0 ? `${attendance.percentage}%` : "--"}
+                    </span>
+                    <span class="text-xs text-slate-400">
+                        ${marks} Marks
+                    </span>
+                </div>
+                <p class="text-xs text-slate-500 mb-1">
+                    ${attendance.total > 0 ? `Present: ${attendance.present} / ${attendance.total}` : "No attendance yet"}
+                </p>
+                <p class="text-[11px] font-semibold ${skip === 0 ? 'text-red-500' : skip === 1 ? 'text-amber-500' : 'text-emerald-600'}">
+                    ${attendance.total === 0 ? 'No session history yet' : skip === 0 ? "You can't skip right now" : skip === 1 ? "You can skip 1 class" : `You can skip ${skip} classes`}
+                </p>
+                <button onclick="openSubjectModal(${subject.subject_id})"
+                    class="w-full py-2 bg-slate-100 text-xs rounded hover:bg-blue-600 hover:text-white transition">
+                    View Details
+                </button>
+            </div>
+        `;
+    });
+}
+
+async function openSubjectModal(subjectId) {
+    const subject = state.subjectMap[String(subjectId)];
+    const attendance = state.attendanceMap[subjectId] || { present: 0, total: 0, percentage: 0 };
+    document.getElementById("modalSubjectName").innerText = subject?.subjects.subject_name || "Subject";
+    document.getElementById("modalAttendance").innerText = `${attendance.percentage}%`;
+    document.getElementById("modalPresent").innerText = attendance.present;
+    document.getElementById("modalTotal").innerText = attendance.total;
+    document.getElementById("modalMarks").innerText = Number(subject?.marks ?? 0).toFixed(2);
     document.getElementById("subjectModal").classList.remove("hidden");
+
+    const historyNode = document.getElementById("modalHistory");
+    historyNode.innerHTML = `<div class="px-3 py-3 text-slate-400">Loading history...</div>`;
+
+    try {
+        const historyResponse = await fetchJson(`/api/student-subject-history/${state.student.student_id}/${subjectId}`);
+        const history = historyResponse.data || [];
+        historyNode.innerHTML = history.length
+            ? history.map((entry) => `
+                <div class="px-3 py-3 flex items-center justify-between">
+                    <span>${escapeHtml(entry.date)}</span>
+                    <span class="font-semibold ${entry.status === 'Present' ? 'text-emerald-600' : 'text-red-500'}">
+                        ${escapeHtml(entry.status)}
+                    </span>
+                </div>
+            `).join("")
+            : `<div class="px-3 py-3 text-slate-400">No attendance history available.</div>`;
+    } catch (error) {
+        historyNode.innerHTML = `<div class="px-3 py-3 text-red-500">${escapeHtml(error.message)}</div>`;
+    }
 }
 
 function closeModal() {
     document.getElementById("subjectModal").classList.add("hidden");
 }
 
+async function logoutUser(event) {
+    event.preventDefault();
+    try {
+        await fetchJson('/api/logout', { method: 'POST' });
+    } catch (error) {
+        console.error(error);
+    }
+    localStorage.removeItem("userId");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("role");
+    window.location.href = "login.html";
+}
+
 async function loadStudentData() {
-    const enrollment = localStorage.getItem("userId");
-
-    // 1. Get student info
-    const res = await fetch(`${API_BASE}/api/student/${enrollment}`);
-    const student = await res.json();
-    console.log("Student object:", student);
-    console.log("Student:", student);
-    console.log("Enrollment from localStorage:", enrollment);
-    //console.log("Attendance Data:", attendance);
-
-    if (student) {
-        document.getElementById("studentName").innerText = student.name;
-        document.getElementById("enrollment").innerText = "EN: " + student.enrollment_no;
-        document.getElementById("roll").innerText = "Roll: " + student.roll_no;
-                function formatYear(year) {
-            if (year == 1) return "1st Year";
-            if (year == 2) return "2nd Year";
-            if (year == 3) return "3rd Year";
-            if (year == 4) return "4th Year";
-            return year + " Year";
+    try {
+        const sessionState = await fetchJson('/api/session');
+        if (!sessionState.data?.authenticated || sessionState.data?.role !== 'student') {
+            window.location.href = 'login.html';
+            return;
         }
 
-        document.getElementById("branchYear").innerText =
-            `${student.branch} | ${formatYear(student.year)}`;
-        // 2. Get attendance using student_id
-        const attRes = await fetch(`${API_BASE}/api/attendance/${student.student_id}`);
-        const attendance = await attRes.json();
-        // 🔥 LOAD SUBJECTS FROM DB
+        const enrollment = sessionState.data.login_id || localStorage.getItem("userId");
+        const [rulesResponse, studentResponse] = await Promise.all([
+            fetchJson('/api/rules'),
+            fetchJson(`/api/student/${encodeURIComponent(enrollment)}`),
+        ]);
 
-        //console.log("Attendance:", attendance);
-        // 1. Fetch subjects
-        const subRes = await fetch(`${API_BASE}/api/student-subjects/${student.student_id}`);
-const subjects = await subRes.json() || [];
+        state.rules = rulesResponse.data || state.rules;
+        state.student = studentResponse.data || studentResponse;
+        localStorage.setItem("userId", state.student.enrollment_no);
+        localStorage.setItem("userName", state.student.name);
+        localStorage.setItem("role", "student");
 
-const attRes2 = await fetch(`${API_BASE}/api/subject-attendance/${student.student_id}`);
-const attendanceMap = await attRes2.json() || {};
+        document.getElementById("studentName").innerText = state.student.name;
+        document.getElementById("enrollment").innerText = `EN: ${state.student.enrollment_no}`;
+        document.getElementById("roll").innerText = `Roll: ${state.student.roll_no}`;
+        document.getElementById("branchYear").innerText = `${state.student.branch} | ${formatYear(state.student.year)}`;
 
-const container = document.getElementById("subjectsContainer");
-container.innerHTML = "";
+        const [attendance, subjects, attendanceMap] = await Promise.all([
+            fetchJson(`/api/attendance/${state.student.student_id}`),
+            fetchJson(`/api/student-subjects/${state.student.student_id}`),
+            fetchJson(`/api/subject-attendance/${state.student.student_id}`),
+        ]);
 
-// 🔴 IF NO SUBJECTS
-if (subjects.length === 0) {
-    container.innerHTML = `
-        <div class="col-span-full text-center text-slate-400">
-            No subjects assigned yet
-        </div>
-    `;
-} else {
-    subjects.sort((a, b) => {
-    const attA = attendanceMap[a.subject_id] || { percentage: 0 };
-    const attB = attendanceMap[b.subject_id] || { percentage: 0 };
+        state.attendanceMap = attendanceMap || {};
+        state.subjectMap = Object.fromEntries((subjects || []).map((subject) => [String(subject.subject_id), subject]));
 
-    return attA.percentage - attB.percentage; // ascending (worst first)
-});
-    subjects.forEach(sub => {
-    const subjectId = sub.subject_id;
-    const subjectName = sub.subjects.subject_name;
-    const facultyName = sub.subjects.faculty?.name || "N/A";
-
-    const att = attendanceMap[subjectId] || {
-        present: 0,
-        total: 0,
-        percentage: 0
-    };
-
-    const skip = calculateSkip(att.present, att.total);
-
-    let skipMsg = "";
-
-    if (att.total === 0) {
-        skipMsg = "No data";
-    } else if (skip === 0) {
-        skipMsg = "❌ You can't skip";
-    } else if (skip === 1) {
-        skipMsg = "⚠️ You can skip 1 class";
-    } else {
-        skipMsg = `✅ You can skip ${skip} classes`;
+        updateOverview(attendance);
+        renderSubjects(subjects || []);
+    } catch (error) {
+        console.error(error);
+        alert(error.message || "Unable to load the student dashboard.");
+        window.location.href = "login.html";
     }
-
-        // MARKS
-       
-
-let marks = calculateMarks(att.percentage);
-
-        // COLOR
-        let color = "text-gray-400 bg-gray-100";
-        if (att.total > 0) {
-            if (att.percentage >= 88) color = "text-emerald-600 bg-emerald-50";
-            else if (att.percentage >= 80) color = "text-blue-600 bg-blue-50";
-            else if (att.percentage >= 67) color = "text-amber-600 bg-amber-50";
-            else color = "text-red-600 bg-red-50";
-        }
-
-        container.innerHTML += `
-            <div class="bg-white p-5 rounded-2xl border shadow-sm">
-               <h3 class="font-bold text-slate-800 mb-1">${subjectName}</h3>
-<p class="text-xs text-slate-400 mb-2">Faculty: ${facultyName}</p>
-
-                <div class="flex justify-between mb-2">
-                    <span class="px-2 py-1 text-xs font-bold rounded ${color}">
-                        ${att.total > 0 ? att.percentage + "%" : "--"}
-                    </span>
-                    <span class="text-xs text-slate-400">
-                        ${att.total > 0 ? marks.toFixed(1) + " Marks" : "--"}
-                    </span>
-                </div>
-
-                <p class="text-xs text-slate-500 mb-1">
-    ${att.total > 0 ? `Present: ${att.present} / ${att.total}` : "No attendance yet"}
-</p>
-
-<p class="text-[11px] font-semibold ${
-    skip === 0 ? 'text-red-500' :
-    skip === 1 ? 'text-amber-500' :
-    'text-emerald-600'
-}">
-    ${skipMsg}
-</p>
-
-               <button onclick="viewDetails(
-    '${subjectName}',
-    ${att.percentage},
-    ${att.present},
-    ${att.total},
-    '${marks.toFixed(1)} Marks'
-)"
-class="w-full py-2 bg-slate-100 text-xs rounded hover:bg-blue-600 hover:text-white transition">
-View Details
-</button>
-            </div>
-        `;
-    });
-}
-        // 3. Show on UI
-     // SAFE DATA EXTRACTION
-const percentage = (attendance && attendance.total_classes > 0)
-    ? attendance.percentage
-    : 0;
-
-const present = (attendance && attendance.present !== undefined)
-    ? attendance.present
-    : 0;
-
-const total = (attendance && attendance.total_classes !== undefined)
-    ? attendance.total_classes
-    : 0;
-
-
-// 🎯 UI UPDATE
-
-// Attendance %
-document.getElementById("attendance").innerText =
-    total > 0 ? percentage + "%" : "--";
-
-// Progress bar
-document.getElementById("progressBar").style.width =
-    total > 0 ? percentage + "%" : "0%";
-
-// Present / Total
-document.getElementById("present").innerText = total > 0 ? present : "--";
-document.getElementById("total").innerText = total > 0 ? total : "--";
-// 🔥 SKIP LOGIC
-const skip = calculateSkip(present, total);
-
-let message = "";
-
-if (total === 0) {
-    message = "No data available";
-} else if (skip === 0) {
-    message = "Attendance low! You cannot skip any class.";
-} else if (skip === 1) {
-    message = "Safe to skip 1 lecture only.";
-} else {
-    message = `Safe to skip ${skip} lectures.`;
 }
 
-document.getElementById("skipText").innerText = message;
-// 🔥 UPDATE TOP MARKS
-document.getElementById("marks").innerText =
-    total > 0 ? calculateMarks(percentage).toFixed(1) : "--";
-    }
-    
-}
-// CALL FUNCTION ON PAGE LOAD
+document.getElementById("logoutLink").addEventListener("click", logoutUser);
 window.onload = loadStudentData;
 </script>
 </body>

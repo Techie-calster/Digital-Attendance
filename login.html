@@ -184,7 +184,7 @@
         </div>
 
         <div class="form-group">
-            <label class="label">ID Number (Email)</label>
+            <label class="label">ID Number</label>
             <div class="input-group">
                 <i class="fa-solid fa-id-card field-icon"></i>
                 <input type="text" id="login_id" class="input-field" placeholder=" Enrollment ID/Faculty ID" required>
@@ -203,12 +203,12 @@
             Login to Dashboard
         </button>
         <div class="signup-redirect" style="margin-top: 25px; text-align: center;">
-            <p>New User? <a href="signup.html">Sign Up</a></p>
+            <p>Accounts are pre-registered by the administrator.</p>
         </div>
     </form>
 
         <div class="footer-links">
-            <a href="#">Forgot Password?</a> • <a href="#">Contact Admin</a>
+            <a href="admin-login.html">Admin Login</a> • <a href="ram_landing.html">Back to Home</a>
         </div>
     </div>
     
@@ -229,6 +229,7 @@
                 // 2. Send data to your Python (app.py)
                 const response = await fetch(`${API_BASE}/api/login`, {
                     method: 'POST',
+                    credentials: 'same-origin',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
                         role: role, 
