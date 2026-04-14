@@ -108,8 +108,11 @@
     <div class="nav-item" onclick="switchTable('Faculty', this)"><i class="fa-solid fa-chalkboard-user"></i> Faculty</div>
     <div class="nav-item" onclick="switchTable('Subjects', this)"><i class="fa-solid fa-book"></i> Subjects</div>
     <div class="nav-item" onclick="switchTable('Student_Subject', this)"><i class="fa-solid fa-link"></i> Enrollment</div>
-    <div class="nav-item" onclick="switchTable('Attendance', this)"><i class="fa-solid fa-calendar-check"></i> Attendance</div>
-    <div class="nav-item" onclick="switchTable('Marks', this)"><i class="fa-solid fa-star"></i> Marks</div>
+    <div class="nav-item" onclick="switchTable('Attendance', this)"><i class="fa-solid fa-calendar-check"></i> Attendance Fixer</div>
+    
+    <div class="nav-item" onclick="logoutAdmin()" style="margin-top: auto; color: #ef4444;">
+        <i class="fa-solid fa-power-off"></i> Logout System
+    </div>
 </nav>
 
 <div class="main-content">
@@ -135,83 +138,261 @@
 </div>
 
 <script>
-let currentTable = 'Students';
+    const API_BASE = "http://127.0.0.1:5000/api";
+    let currentTable = 'students';
+    let attendanceFixes = []; // Temporary storage for attendance status changes
 
-// Schema mapping for all tables
-const schema = {
-    Students: ['name', 'enrollment_no', 'roll_no', 'year', 'branch', 'section', 'password'],
-    Faculty: ['name', 'employee_id', 'department', 'password'],
-    Subjects: ['subject_name', 'faculty_id'],
-    Student_Subject: ['student_id', 'subject_id'],
-    Attendance: ['student_id', 'subject_id', 'date', 'status'],
-    Marks: ['student_id', 'subject_id', 'marks']
-};
+    // Schema mapping for Admin operations
+    const schema = {
+        students: ['name', 'enrollment_no', 'roll_no', 'year', 'branch', 'section','password'],
+        faculty: ['name', 'employee_id', 'department','password'],
+        subjects: ['subject_name', 'faculty_id'],
+        'assign-subject': ['student_id', 'subject_id'],
+        attendance: ['subject_id', 'date'] // Admin inputs these to fetch the editable list
+    };
 
-function switchTable(tableName, element) {
-    currentTable = tableName;
-    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-    element.classList.add('active');
-    document.getElementById('currentTitle').innerText = tableName + " Management";
-    renderForm();
-    loadData();
-}
+    const tableToRoute = {
+        'Students': 'students',
+        'Faculty': 'faculty',
+        'Subjects': 'subjects',
+        'Student_Subject': 'assign-subject',
+        'Attendance': 'attendance'
+    };
 
-function renderForm() {
-    const container = document.getElementById('dynamicForm');
-    container.innerHTML = '';
-    schema[currentTable].forEach(field => {
-        const type = (field === 'year' || field.includes('_id')) ? 'number' : (field === 'date' ? 'date' : (field === 'password' ? 'password' : 'text'));
-        container.innerHTML += `
-            <div class="input-group">
-                <label>${field.replace('_', ' ')}</label>
-                <input type="${type}" id="field_${field}" placeholder="Enter ${field}">
-            </div>`;
-    });
-}
-
-async function submitData() {
-    const payload = {};
-    schema[currentTable].forEach(field => {
-        const val = document.getElementById(`field_${field}`).value;
-        payload[field] = (document.getElementById(`field_${field}`).type === 'number') ? parseFloat(val) : val;
-    });
-
-    const res = await fetch('http://127.0.0.1:5000/api/admin/insert', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ table: currentTable, payload })
-    });
-
-    const result = await res.json();
-    if(result.status === 'success') {
-        alert('Record Added!');
+    function switchTable(displayName, element) {
+        currentTable = tableToRoute[displayName] || displayName.toLowerCase();
+        
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        element.classList.add('active');
+        document.getElementById('currentTitle').innerText = displayName + " Management";
+        
+        // Reset temporary state when switching tabs
+        attendanceFixes = [];
+        renderForm();
         loadData();
-    } else { alert('Error: ' + result.message); }
-}
-
-async function loadData() {
-    const res = await fetch(`http://127.0.0.1:5000/api/admin/view?table=${currentTable}`);
-    const data = await res.json();
-    
-    if(!data.records || data.records.length === 0) {
-        document.getElementById('tableDisplay').innerHTML = "No records found.";
-        return;
     }
 
-    let html = '<table><thead><tr>';
-    Object.keys(data.records[0]).forEach(key => html += `<th>${key}</th>`);
-    html += '</tr></thead><tbody>';
-    
-    data.records.forEach(row => {
-        html += '<tr>';
-        Object.values(row).forEach(val => html += `<td>${val}</td>`);
-        html += '</tr>';
-    });
-    
-    document.getElementById('tableDisplay').innerHTML = html + '</tbody></table>';
-}
+    function renderForm() {
+        const container = document.getElementById('dynamicForm');
+        container.innerHTML = '';
+        
+        const fields = schema[currentTable] || [];
+        fields.forEach(field => {
+            let type = (field.includes('_id') || field === 'year') ? 'number' : 'text';
+            if (field === 'date') type = 'date';
 
-window.onload = () => { renderForm(); loadData(); };
+            container.innerHTML += `
+                <div class="input-group">
+                    <label>${field.replace('_', ' ')}</label>
+                    <input type="${type}" id="field_${field}" placeholder="Enter ${field}">
+                </div>`;
+        });
+
+        // Update the main button based on the active tab
+        const btn = document.querySelector('.btn-primary');
+        if (currentTable === 'attendance') {
+            btn.innerText = "Fetch Attendance for Fixing";
+            btn.onclick = fetchAttendanceForAdmin;
+        } else {
+            btn.innerText = "Commit to Database";
+            btn.onclick = submitData;
+        }
+    }
+
+    // --- STANDARD MANAGEMENT (STUDENTS/FACULTY/SUBJECTS) ---
+
+    async function submitData() {
+        const payload = {};
+        const fields = schema[currentTable];
+        
+        // 1. Collect data from inputs
+        fields.forEach(field => {
+            const input = document.getElementById(`field_${field}`);
+            payload[field] = (input.type === 'number') ? parseInt(input.value) : input.value;
+        });
+
+        try {
+            const res = await fetch(`${API_BASE}/admin/${currentTable}`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            });
+
+            const result = await res.json();
+            if (res.ok) {
+                alert('Success: Record added.');
+
+                // --- CLEAR ALL FIELDS AFTER SUCCESS ---
+                fields.forEach(field => {
+                    const input = document.getElementById(`field_${field}`);
+                    if (input) {
+                        input.value = ''; // Reset the value
+                    }
+                });
+
+                loadData(); // Refresh the table
+            } else {
+                alert('Error: ' + (result.error || result.message));
+            }
+        } catch (err) {
+            alert('Server connection failed.');
+        }
+    }
+
+    async function loadData() {
+        if (currentTable === 'attendance') return; // Handled by specialized fetch function
+
+        const display = document.getElementById('tableDisplay');
+        try {
+            const res = await fetch(`${API_BASE}/admin/${currentTable}`);
+            const data = await res.json();
+            
+            if (!data || data.length === 0) {
+                display.innerHTML = "No records found.";
+                return;
+            }
+
+            let html = '<table><thead><tr>';
+            Object.keys(data[0]).forEach(key => html += `<th>${key}</th>`);
+            html += '</tr></thead><tbody>';
+            
+            data.forEach(row => {
+                html += '<tr>';
+                Object.values(row).forEach(val => {
+                    const cell = (typeof val === 'object' && val !== null) ? JSON.stringify(val) : val;
+                    html += `<td>${cell || '-'}</td>`;
+                });
+                html += '</tr>';
+            });
+            
+            display.innerHTML = html + '</tbody></table>';
+        } catch (err) {
+            display.innerHTML = "Error loading data.";
+        }
+    }
+
+    // --- ATTENDANCE FIXER LOGIC (ADMIN OVERRIDE) ---
+
+    async function fetchAttendanceForAdmin() {
+        const subId = document.getElementById('field_subject_id').value;
+        const date = document.getElementById('field_date').value;
+
+        if(!subId || !date) return alert("Subject ID and Date are required to locate mistakes.");
+
+        try {
+            const res = await fetch(`${API_BASE}/admin/attendance-view?subject_id=${subId}&date=${date}`);
+            const data = await res.json();
+            renderAttendanceEditor(data);
+        } catch (err) {
+            alert("Failed to fetch attendance records.");
+        }
+    }
+
+    function renderAttendanceEditor(records) {
+        const display = document.getElementById('tableDisplay');
+        if (!records || records.length === 0) {
+            display.innerHTML = "No attendance records found for this selection.";
+            return;
+        }
+
+        let html = `<h3>Editing Session: ${document.getElementById('field_date').value}</h3>`;
+        html += '<table><thead><tr><th>Student</th><th>Roll No</th><th>Current Status</th><th>Action</th></tr></thead><tbody>';
+
+        records.forEach(row => {
+            html += `
+                <tr>
+                    <td>${row.students.name}</td>
+                    <td>${row.students.roll_no}</td>
+                    <td id="status_${row.attendance_id}" style="font-weight:bold;">${row.status}</td>
+                    <td>
+                        <button onclick="toggleAdminStatus(${row.attendance_id})" class="btn-edit" style="background:#475569; color:white; border-radius:8px; padding:5px 10px; cursor:pointer; border:none;">Flip Status</button>
+                    </td>
+                </tr>`;
+        });
+        html += '</tbody></table>';
+        html += `<button class="btn-primary" onclick="saveAdminAttendanceFix()" style="margin-top:20px;">Push Corrections to Database</button>`;
+        display.innerHTML = html;
+    }
+
+    function toggleAdminStatus(id) {
+        const td = document.getElementById(`status_${id}`);
+        const newStatus = td.innerText === 'Present' ? 'Absent' : 'Present';
+        td.innerText = newStatus;
+        
+        // Add to buffer for bulk update
+        const existing = attendanceFixes.find(f => f.attendance_id === id);
+        if (existing) {
+            existing.status = newStatus;
+        } else {
+            attendanceFixes.push({ attendance_id: id, status: newStatus });
+        }
+    }
+
+    async function saveAdminAttendanceFix() {
+        if (attendanceFixes.length === 0) return alert("No corrections were made to the current list.");
+
+        try {
+            const res = await fetch(`${API_BASE}/admin/attendance-update`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(attendanceFixes)
+            });
+
+            if (res.ok) {
+                alert("Attendance corrected successfully in the database.");
+                attendanceFixes = []; // Clear buffer
+                fetchAttendanceForAdmin(); // Refresh the list
+            }
+        } catch (err) {
+            alert("Failed to push corrections.");
+        }
+    }
+
+    // --- SESSION SECURITY GUARD ---
+    function checkAdminSession() {
+        const role = localStorage.getItem("role");
+        const user = localStorage.getItem("userId");
+
+        // If no admin session is found, kick them back to the login page
+        if (role !== "admin" || !user) {
+            window.location.href = "admin-login.html";
+        }
+    }
+
+    // --- SECURE ADMIN SESSION GUARD ---
+    function verifyAdminAccess() {
+        const role = localStorage.getItem("role");
+        const user = localStorage.getItem("userId");
+
+        // If session is invalid, overwrite history entry with admin-login.html
+        if (role !== "admin" || !user) {
+            window.location.replace("admin-login.html");
+        }
+    }
+
+    // Handle "Back" swipe or button press (detects page visibility from cache)
+    window.addEventListener('pageshow', function(event) {
+        // Force re-check if the page is loaded from the back-forward cache
+        if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+            verifyAdminAccess();
+        }
+    });
+
+    // --- LOGOUT LOGIC ---
+    function logoutAdmin() {
+        // Completely wipe all stored credentials
+        localStorage.clear();
+        
+        // Use replace so the dashboard is removed from the browser history
+        window.location.replace("admin-login.html");
+    }
+
+    // Update window.onload to include the security check
+    window.onload = () => { 
+        verifyAdminAccess(); // Verify identity before loading anything
+        renderForm(); 
+        loadData(); 
+    };
 </script>
 </body>
 </html>

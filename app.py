@@ -6,14 +6,13 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from supabase import create_client, Client
 
-try:
-    from routes.admin import admin_bp
-except Exception:
-    admin_bp = None
+
+from routes.admin import admin_bp
+
 
 app = Flask(__name__)
-if admin_bp is not None:
-    app.register_blueprint(admin_bp, url_prefix="/api")
+
+app.register_blueprint(admin_bp, url_prefix="/api")
 CORS(app)
 
 @app.route('/')

@@ -185,6 +185,46 @@
             IP Address Logged. Unauthorized attempts are reported to university IT.
         </div>
     </div>
-    
+    <script>
+        const API_BASE = "http://127.0.0.1:5000/api";
+
+        document.querySelector('form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Target the inputs by their position or add IDs to your HTML
+            const inputs = document.querySelectorAll('.admin-input');
+            const username = inputs[0].value;
+            const password = inputs[1].value;
+
+            try {
+                // This calls @admin_bp.route('/admin/login') in your admin.py
+                const response = await fetch(`${API_BASE}/admin/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        username: username, 
+                        password: password 
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.status === "success") {
+                    // Store admin session details
+                    localStorage.setItem("userName", "Administrator");
+                    localStorage.setItem("role", "admin");
+                    localStorage.setItem("userId", username);
+
+                    // Redirect to the dashboard
+                    window.location.href = data.redirect;
+                } else {
+                    alert(data.error || "Access Denied: Invalid System Identity or Key.");
+                }
+            } catch (error) {
+                console.error("Connection Error:", error);
+                alert("Infrastructure Offline: Could not connect to the authentication server.");
+            }
+        });
+    </script>
 </body>
 </html>
