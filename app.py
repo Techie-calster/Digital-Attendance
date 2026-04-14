@@ -10,6 +10,14 @@ from models.db import check_password, get_rules, query_all, query_one, run_trans
 from routes.admin import admin_bp
 
 BASE_DIR = Path(__file__).resolve().parent
+KNOWN_PAGES = {
+    "login.html",
+    "student-dashboard.html",
+    "faculty-dashboard.html",
+    "admin-login.html",
+    "admin-dashboard.html",
+    "ram_landing.html",
+}
 
 app = Flask(__name__)
 app.secret_key = "digital-attendance-dev-secret"
@@ -1095,6 +1103,24 @@ def submit_attendance():
 @app.route("/")
 def landing_page():
     return send_from_directory(BASE_DIR, "ram_landing.html")
+
+
+@app.route("/login.html")
+@app.route("/student-dashboard.html")
+@app.route("/faculty-dashboard.html")
+@app.route("/admin-login.html")
+@app.route("/admin-dashboard.html")
+@app.route("/ram_landing.html")
+def serve_known_pages():
+    page_name = request.path.lstrip("/")
+    return send_from_directory(BASE_DIR, page_name)
+
+
+@app.route("/Digital-Attendance/<path:filename>")
+def serve_legacy_workspace_file(filename):
+    if filename in KNOWN_PAGES:
+        return send_from_directory(BASE_DIR, filename)
+    return serve_workspace_file(filename)
 
 
 @app.route("/<path:filename>")
