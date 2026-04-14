@@ -22,7 +22,7 @@ def home():
 
 # 🔐 Supabase config
 SUPABASE_URL = "https://afxkkvygukkoxfjgqyur.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmeGtrdnlndWtrb3hmamdxeXVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3ODQ0MjUsImV4cCI6MjA5MDM2MDQyNX0.wg7Ob6vpFwRYaurexbIXgBcvd1z_Id5r-bRWfHBKeYc"
+SUPABASE_KEY = ""
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
