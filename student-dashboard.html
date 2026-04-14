@@ -160,7 +160,7 @@ function escapeHtml(value) {
 
 async function fetchJson(path, options = {}) {
     const response = await fetch(`${API_BASE}${path}`, {
-        credentials: 'same-origin',
+        credentials: 'include',
         ...options,
     });
     const payload = await response.json().catch(() => null);
@@ -310,14 +310,19 @@ async function logoutUser(event) {
     localStorage.removeItem("userId");
     localStorage.removeItem("userName");
     localStorage.removeItem("role");
-    window.location.href = "login.html";
+    window.location.href = `${API_BASE}/login.html`;
 }
 
 async function loadStudentData() {
     try {
+        if (window.location.origin !== API_BASE) {
+            window.location.replace(`${API_BASE}/student-dashboard.html`);
+            return;
+        }
+
         const sessionState = await fetchJson('/api/session');
         if (!sessionState.data?.authenticated || sessionState.data?.role !== 'student') {
-            window.location.href = 'login.html';
+            window.location.href = `${API_BASE}/login.html`;
             return;
         }
 
@@ -352,7 +357,7 @@ async function loadStudentData() {
     } catch (error) {
         console.error(error);
         alert(error.message || "Unable to load the student dashboard.");
-        window.location.href = "login.html";
+        window.location.href = `${API_BASE}/login.html`;
     }
 }
 

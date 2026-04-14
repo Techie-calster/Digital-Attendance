@@ -1,4 +1,7 @@
 venv/
 __pycache__/
 .env
-digital_attendance.db
+digital_attendance*.db
+digital_attendance*.db-journal
+digital_attendance*.db-wal
+digital_attendance*.db-shm

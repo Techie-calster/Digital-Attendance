@@ -247,7 +247,7 @@
 		};
 	}
 	async function j(url, opt = {}) {
-		const response = await fetch(API + url, { credentials: "same-origin", ...opt });
+		const response = await fetch(API + url, { credentials: "include", ...opt });
 		const payload = await response.json().catch(() => ({}));
 		if (!response.ok || payload.status === "error") {
 			throw new Error(payload.message || `Request failed with status ${response.status}`);
@@ -266,7 +266,7 @@
 		}
 	}
 	function goToLogin() {
-		location.href = "login.html";
+		location.href = `${API}/login.html`;
 	}
 	function setFaculty(faculty) {
 		el.facultyName.textContent = faculty.name || "Faculty Member";
@@ -629,10 +629,17 @@ function wire() {
 	});
 }
 async function init() {
-	if (state.role !== "faculty" || !state.employeeId) {
+	if (window.location.origin !== API) {
+		location.replace(`${API}/faculty-dashboard.html`);
+		return;
+	}
+	const sessionState = await j("/api/session");
+	if (!sessionState.data?.authenticated || sessionState.data?.role !== "faculty") {
 		goToLogin();
 		return;
 	}
+	state.role = sessionState.data.role;
+	state.employeeId = sessionState.data.login_id;
 	await loadRules();
 	el.todayLabel.textContent = new Date().toLocaleDateString(undefined, {
 		day: "numeric",

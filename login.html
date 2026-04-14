@@ -6,7 +6,7 @@
     <title>Portal Login | Digital Attendance</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <style>
         :root {
             --primary-blue: #2563eb;
@@ -17,15 +17,15 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
 
         body {
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(37, 99, 235, 0.7)), 
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(37, 99, 235, 0.7)),
                         url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070');
             background-size: cover;
             background-position: center;
-            overflow: hidden;
+            padding: 1.5rem;
         }
 
         .login-card {
@@ -55,12 +55,12 @@
         }
 
         .form-group { margin-bottom: 1.25rem; }
-        
-        .label { 
-            display: block; 
-            margin-bottom: 0.5rem; 
-            font-size: 0.85rem; 
-            font-weight: 600; 
+
+        .label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
             color: #1e293b;
         }
 
@@ -81,12 +81,12 @@
             background: white;
         }
 
-        .field-icon { 
-            position: absolute; 
-            left: 1rem; 
-            top: 50%; 
-            transform: translateY(-50%); 
-            color: #94a3b8; 
+        .field-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
         }
 
         .btn-submit {
@@ -108,6 +108,13 @@
             transform: translateY(-1px);
         }
 
+        .helper {
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-gray);
+        }
+
         .footer-links {
             margin-top: 1.5rem;
             text-align: center;
@@ -125,7 +132,6 @@
     </style>
 </head>
 <body>
-
     <div class="login-card">
         <div class="brand-header">
             <div style="background: var(--primary-blue); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; margin: 0 auto 1rem; font-size: 1.4rem;">
@@ -135,12 +141,12 @@
             <p>Digital Attendance System</p>
         </div>
 
-        <!-- <form>
+        <form onsubmit="performLogin(event)">
             <div class="form-group">
                 <label class="label">Identity</label>
                 <div class="input-group">
                     <i class="fa-solid fa-user-tag field-icon"></i>
-                    <select class="input-field" style="appearance: none; cursor: pointer;">
+                    <select id="role" class="input-field" style="appearance: none; cursor: pointer;">
                         <option value="student">Student</option>
                         <option value="faculty">Faculty Member</option>
                     </select>
@@ -151,7 +157,7 @@
                 <label class="label">ID Number</label>
                 <div class="input-group">
                     <i class="fa-solid fa-id-card field-icon"></i>
-                    <input type="text" class="input-field" placeholder=" Enrollment ID/Faculty ID" required>
+                    <input type="text" id="login_id" class="input-field" placeholder="Enrollment ID / Faculty ID" required>
                 </div>
             </div>
 
@@ -159,111 +165,72 @@
                 <label class="label">Password</label>
                 <div class="input-group">
                     <i class="fa-solid fa-lock field-icon"></i>
-                    <input type="password" class="input-field" placeholder="••••••••" required>
+                    <input type="password" id="password" class="input-field" placeholder="Enter password" required>
                 </div>
             </div>
 
             <button type="submit" class="btn-submit">
                 Login to Dashboard
             </button>
-            <div class="signup-redirect"style="margin-top: 25px; text-align: center;">
-                <p>New User? <a href="signup.html">Sign Up</a></p>
-            </div>
-        </form> -->
 
-        <form onsubmit="performLogin(event)">
-        <div class="form-group">
-            <label class="label">Identity</label>
-            <div class="input-group">
-                <i class="fa-solid fa-user-tag field-icon"></i>
-                <select id="role" class="input-field" style="appearance: none; cursor: pointer;">
-                    <option value="student">Student</option>
-                    <option value="faculty">Faculty Member</option>
-                </select>
+            <div class="helper">
+                Accounts are pre-registered by the administrator.
             </div>
-        </div>
-
-        <div class="form-group">
-            <label class="label">ID Number</label>
-            <div class="input-group">
-                <i class="fa-solid fa-id-card field-icon"></i>
-                <input type="text" id="login_id" class="input-field" placeholder=" Enrollment ID/Faculty ID" required>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="label">Password</label>
-            <div class="input-group">
-                <i class="fa-solid fa-lock field-icon"></i>
-                <input type="password" id="password" class="input-field" placeholder="••••••••" required>
-            </div>
-        </div>
-
-        <button type="submit" class="btn-submit">
-            Login to Dashboard
-        </button>
-        <div class="signup-redirect" style="margin-top: 25px; text-align: center;">
-            <p>Accounts are pre-registered by the administrator.</p>
-        </div>
-    </form>
+        </form>
 
         <div class="footer-links">
             <a href="admin-login.html">Admin Login</a> • <a href="ram_landing.html">Back to Home</a>
         </div>
     </div>
-    
+
     <script>
         const API_BASE = window.location.protocol.startsWith('http')
             ? `${window.location.protocol}//${window.location.hostname || '127.0.0.1'}:5000`
             : 'http://127.0.0.1:5000';
 
-        async function performLogin(e) {
-            e.preventDefault();
-            
-            // 1. Get values from the IDs we added
+        if (window.location.origin !== API_BASE) {
+            window.location.replace(`${API_BASE}/login.html`);
+        }
+
+        async function performLogin(event) {
+            event.preventDefault();
+
             const role = document.getElementById('role').value;
-            const login_id = document.getElementById('login_id').value;
+            const login_id = document.getElementById('login_id').value.trim();
             const password = document.getElementById('password').value;
 
             try {
-                // 2. Send data to your Python (app.py)
                 const response = await fetch(`${API_BASE}/api/login`, {
                     method: 'POST',
-                    credentials: 'same-origin',
+                    credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        role: role, 
-                        login_id: login_id, 
-                        password: password 
-                    })
+                    body: JSON.stringify({ role, login_id, password })
                 });
 
-                const data = await response.json();
+                const payload = await response.json();
+                const sessionData = payload.data || payload;
 
-                console.log(data); // 👈 ADD THIS
+                if (!response.ok || payload.status !== 'success') {
+                    throw new Error(payload.message || 'Invalid login credentials');
+                }
 
-                if (data.status === "success") {
-    // 🔥 STORE EVERYTHING CORRECTLY
-    localStorage.setItem("userName", data.name);
-    localStorage.setItem("role", data.role);
-    if (data.role === "student") {
-    localStorage.setItem("userId", data.enrollment_no);
-} else {
-    localStorage.setItem("userId", login_id); // faculty employee_id
-}
+                localStorage.setItem('userName', sessionData.name || '');
+                localStorage.setItem('role', sessionData.role || role);
 
-    // ⚠️ MOST IMPORTANT LINE (FIX)
-    //localStorage.setItem("userId", login_id);
+                if (sessionData.role === 'student') {
+                    localStorage.setItem('userId', sessionData.enrollment_no || login_id);
+                } else {
+                    localStorage.setItem('userId', sessionData.employee_id || login_id);
+                }
 
-    console.log("Stored userId:", login_id); // DEBUG
+                if (!sessionData.redirect) {
+                    throw new Error('Login succeeded but no redirect page was returned.');
+                }
 
-    window.location.href = data.redirect;
-} else {
-                alert(data.message || "Invalid login credentials");
-            }
+                window.location.href = `${API_BASE}/${sessionData.redirect}`;
             } catch (error) {
-                console.error("Error:", error);
-                alert("Could not connect to the server. Make sure app.py is running!");
+                console.error('Login error:', error);
+                alert(error.message || 'Could not connect to the server. Make sure app.py is running.');
             }
         }
     </script>

@@ -10,7 +10,13 @@ from typing import Any, Iterable, Sequence
 from werkzeug.security import check_password_hash, generate_password_hash
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-DATABASE_PATH = Path(os.getenv("DATABASE_PATH", str(BASE_DIR / "digital_attendance.db")))
+DATABASE_PATH = Path(
+    os.getenv("DATABASE_PATH", str(BASE_DIR / "digital_attendance_runtime.db"))
+)
+USE_SHARED_MEMORY_DB = True
+MEMORY_DATABASE_URI = "file:digital_attendance_runtime?mode=memory&cache=shared"
+KEEPER_CONNECTION = None
+DATABASE_READY = False
 
 DEFAULT_ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
 DEFAULT_ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "Admin@123")
@@ -127,10 +133,47 @@ CREATE TABLE IF NOT EXISTS admin_users (
 
 
 def _connect() -> sqlite3.Connection:
-    connection = sqlite3.connect(DATABASE_PATH)
+    if USE_SHARED_MEMORY_DB:
+        connection = sqlite3.connect(
+            MEMORY_DATABASE_URI,
+            uri=True,
+            check_same_thread=False,
+        )
+    else:
+        connection = sqlite3.connect(DATABASE_PATH)
     connection.row_factory = sqlite3.Row
     connection.execute("PRAGMA foreign_keys = ON")
+    connection.execute("PRAGMA journal_mode = MEMORY")
+    connection.execute("PRAGMA temp_store = MEMORY")
     return connection
+
+
+def _get_connection() -> sqlite3.Connection:
+    global KEEPER_CONNECTION
+    if USE_SHARED_MEMORY_DB:
+        if KEEPER_CONNECTION is None:
+            KEEPER_CONNECTION = _connect()
+        return KEEPER_CONNECTION
+    return _connect()
+
+
+def _runtime_db_files() -> list[Path]:
+    return [
+        DATABASE_PATH,
+        Path(f"{DATABASE_PATH}-journal"),
+        Path(f"{DATABASE_PATH}-wal"),
+        Path(f"{DATABASE_PATH}-shm"),
+    ]
+
+
+def _remove_runtime_database(include_main_db: bool = True) -> None:
+    targets = _runtime_db_files() if include_main_db else _runtime_db_files()[1:]
+    for path in targets:
+        if path.exists():
+            try:
+                path.unlink()
+            except PermissionError:
+                continue
 
 
 def _drop_all(connection: sqlite3.Connection) -> None:
@@ -253,74 +296,122 @@ def _seed_rules_and_admin(connection: sqlite3.Connection) -> None:
     )
 
 
-def initialize_database(force: bool = False) -> None:
+def initialize_database(force: bool = False, recovered: bool = False) -> None:
+    global DATABASE_READY
+    if USE_SHARED_MEMORY_DB and DATABASE_READY and not force:
+        return
+
     DATABASE_PATH.parent.mkdir(parents=True, exist_ok=True)
-    connection = _connect()
+    connection = None
     try:
+        if (
+            not USE_SHARED_MEMORY_DB
+            and not force
+            and DATABASE_PATH.exists()
+            and DATABASE_PATH.stat().st_size > 0
+        ):
+            connection = _connect()
+            table_row = connection.execute(
+                """
+                SELECT name
+                FROM sqlite_master
+                WHERE type = 'table' AND name = 'students'
+                """
+            ).fetchone()
+            if table_row and _table_has_rows(connection, "students"):
+                return
+            connection.close()
+            connection = None
+
+        if force and not USE_SHARED_MEMORY_DB:
+            _remove_runtime_database()
+
+        connection = _get_connection()
         if force:
             _drop_all(connection)
         connection.executescript(SCHEMA)
         if _table_has_rows(connection, "students"):
+            DATABASE_READY = True
             return
         _seed_users(connection)
         _seed_attendance_and_marks(connection)
         _seed_rules_and_admin(connection)
         connection.commit()
+        DATABASE_READY = True
+    except sqlite3.OperationalError as exc:
+        if not recovered and (
+            "disk i/o error" in str(exc).lower()
+            or "database is locked" in str(exc).lower()
+        ):
+            if connection is not None and not USE_SHARED_MEMORY_DB:
+                connection.close()
+                connection = None
+            if not USE_SHARED_MEMORY_DB:
+                _remove_runtime_database(include_main_db=False)
+            initialize_database(force=False, recovered=True)
+            return
+        raise
     finally:
-        connection.close()
+        if connection is not None and not USE_SHARED_MEMORY_DB:
+            connection.close()
 
 
 def query_all(query: str, params: Sequence[Any] | None = None) -> list[dict[str, Any]]:
     initialize_database()
-    connection = _connect()
+    connection = _get_connection()
     try:
         rows = connection.execute(query, params or ()).fetchall()
         return [dict(row) for row in rows]
     finally:
-        connection.close()
+        if not USE_SHARED_MEMORY_DB:
+            connection.close()
 
 
 def query_one(query: str, params: Sequence[Any] | None = None) -> dict[str, Any] | None:
     initialize_database()
-    connection = _connect()
+    connection = _get_connection()
     try:
         row = connection.execute(query, params or ()).fetchone()
         return dict(row) if row else None
     finally:
-        connection.close()
+        if not USE_SHARED_MEMORY_DB:
+            connection.close()
 
 
 def execute_write(query: str, params: Sequence[Any] | None = None) -> int:
     initialize_database()
-    connection = _connect()
+    connection = _get_connection()
     try:
         cursor = connection.execute(query, params or ())
         connection.commit()
         return cursor.lastrowid
     finally:
-        connection.close()
+        if not USE_SHARED_MEMORY_DB:
+            connection.close()
 
 
 def execute_many(query: str, rows: Iterable[Sequence[Any]]) -> int:
     initialize_database()
-    connection = _connect()
+    connection = _get_connection()
     try:
         cursor = connection.executemany(query, list(rows))
         connection.commit()
         return cursor.rowcount
     finally:
-        connection.close()
+        if not USE_SHARED_MEMORY_DB:
+            connection.close()
 
 
 def run_transaction(callback):
     initialize_database()
-    connection = _connect()
+    connection = _get_connection()
     try:
         result = callback(connection)
         connection.commit()
         return result
     finally:
-        connection.close()
+        if not USE_SHARED_MEMORY_DB:
+            connection.close()
 
 
 def make_password_hash(password: str) -> str:
@@ -360,7 +451,9 @@ def update_rules(eligibility_threshold: int, warning_threshold: int, high_thresh
 
 
 def reset_database() -> None:
+    global DATABASE_READY, KEEPER_CONNECTION
+    if USE_SHARED_MEMORY_DB and KEEPER_CONNECTION is not None:
+        KEEPER_CONNECTION.close()
+        KEEPER_CONNECTION = None
+        DATABASE_READY = False
     initialize_database(force=True)
-
-
-initialize_database()

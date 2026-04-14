@@ -30,7 +30,7 @@ python app.py
 http://127.0.0.1:5000/
 ```
 
-The first run creates `digital_attendance.db` automatically and seeds demo data.
+The app seeds a shared in-memory SQLite database automatically on startup.
 
 ## Demo Credentials
 
@@ -93,8 +93,8 @@ Use any seeded user from the database. A few ready-to-use examples:
 
 ## Notes
 
-- The application now uses a local SQLite database for reliable demo/testing behavior.
-- Passwords are stored as hashes in the local runtime database.
+- The application now uses a shared in-memory SQLite database for reliable demo/testing behavior.
+- Passwords are stored as hashes in the runtime database.
 - Attendance rules are editable from the admin dashboard and reflected by the student and faculty flows.
 
 ## Supporting Docs

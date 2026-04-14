@@ -212,6 +212,10 @@
             ? `${window.location.protocol}//${window.location.hostname || '127.0.0.1'}:5000`
             : 'http://127.0.0.1:5000';
 
+        if (window.location.origin !== API_BASE) {
+            window.location.replace(`${API_BASE}/admin-login.html`);
+        }
+
         function showMessage(message) {
             const node = document.getElementById('message');
             node.textContent = message;
@@ -226,7 +230,7 @@
             try {
                 const response = await fetch(`${API_BASE}/api/admin/login`, {
                     method: 'POST',
-                    credentials: 'same-origin',
+                    credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password }),
                 });
@@ -238,7 +242,7 @@
                 localStorage.setItem('role', 'admin');
                 localStorage.setItem('userId', payload.data.username);
                 localStorage.setItem('userName', payload.data.display_name);
-                window.location.href = payload.data.redirect;
+                window.location.href = `${API_BASE}/${payload.data.redirect}`;
             } catch (error) {
                 showMessage(error.message || 'Admin login failed.');
             }
