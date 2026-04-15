@@ -5,10 +5,11 @@ from math import ceil
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from supabase import create_client, Client
-
+import os
+from dotenv import load_dotenv
 
 from routes.admin import admin_bp
-
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -20,8 +21,8 @@ def home():
     return {"message": "API is running 🚀"}
 
 # 🔐 Supabase config
-SUPABASE_URL = "https://afxkkvygukkoxfjgqyur.supabase.co"
-SUPABASE_KEY = ""
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
