@@ -1,7 +1,11 @@
 from flask import Blueprint, request, jsonify
 from models.db import supabase
 from postgrest.exceptions import APIError
+from flask_cors import cross_origin
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -76,12 +80,14 @@ def admin_get_attendance():
 
     # Admin fetches specific records to fix mistakes
     response = supabase.table("attendance") \
-        .select("attendance_id, status, student_id, students(name, roll_no)") \
-        .eq("subject_id", subject_id) \
-        .eq("date", date) \
-        .execute()
-    
+    .select("attendance_id, status, student_id, students(name, roll_no)") \
+    .eq("subject_id", int(subject_id)) \
+    .eq("date", date) \
+    .execute()
+    print(response.data)
     return jsonify(response.data)
+    
+    
 
 @admin_bp.route('/admin/attendance-update', methods=['POST'])
 def admin_update_attendance():
@@ -148,35 +154,60 @@ def add_subject():
 
     return {"message": "Subject added", "data": response.data}
 
-@admin_bp.route('/admin/assign-subject', methods=['POST'])
-def assign_subject():
-    data = request.json
 
-    # 1. Validation check
-    if not data.get("subject_name") or not data.get("faculty_id"):
-        return {"error": "Missing required fields: Subject Name or Faculty ID"}, 400
+@admin_bp.route('/student-subject', methods=['GET'])
+def get_student_subject():
+    response = supabase.table("student_subject").select("*").execute()
+    return jsonify(response.data)
+
+
+@admin_bp.route('/assign-subject', methods=['POST', 'OPTIONS'])
+@cross_origin(origins="http://127.0.0.1:5500")
+def assign_subject():
+
+    if request.method == "OPTIONS":
+        return jsonify({"message": "CORS preflight success"}), 200
+
+    data = request.get_json()
+
+    if not data.get("student_id") or not data.get("subject_id"):
+        return {
+            "error": "Missing required fields: Student ID or Subject ID"
+        }, 400
 
     try:
-        # 2. Database Insert
-        response = supabase.table("subjects").insert({
-            "subject_name": data["subject_name"],
-            "faculty_id": data["faculty_id"]
+        response = supabase.table("student_subject").insert({
+            "student_id": data["student_id"],
+            "subject_id": data["subject_id"]
         }).execute()
 
-        return {"message": "Subject added successfully", "data": response.data}
+        return jsonify({
+            "message": "Student assigned to subject successfully",
+            "data": response.data
+        }), 200
 
     except APIError as e:
-        # Check for Foreign Key violation (Code 23503)
-        # Occurs if the faculty_id provided does not exist in the Faculty table
         if e.code == '23503':
-            return {"error": f"Invalid Faculty: ID {data['faculty_id']} does not exist."}, 400
-        
-        # Check for Duplicate Name if you've set subject_name to UNIQUE (Code 23505)
-        if e.code == '23505':
-            return {"error": f"Already Exists: '{data['subject_name']}' is already registered."}, 409
+            return jsonify({
+                "error": "Invalid Student ID or Subject ID"
+            }), 400
 
-        return {"error": f"Database Error: {e.message}"}, 500
-@admin_bp.route('/admin/student-subjects/<int:student_id>', methods=['GET'])
+        if e.code == '23505':
+            return jsonify({
+                "error": "This student is already assigned to this subject"
+            }), 409
+
+        return jsonify({
+            "error": str(e)
+        }), 500
+
+    except Exception as e:
+        return jsonify({
+            "error": str(e)
+        }), 500
+
+
+@admin_bp.route('/student-subjects/<int:student_id>', methods=['GET'])
 def get_student_subjects(student_id):
     response = supabase.table("student_subject") \
         .select("subject_id, subjects(*)") \
@@ -184,4 +215,6 @@ def get_student_subjects(student_id):
         .execute()
 
     return jsonify(response.data)
+
+
 

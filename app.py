@@ -14,7 +14,7 @@ load_dotenv()
 app = Flask(__name__)
 
 app.register_blueprint(admin_bp, url_prefix="/api")
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "http://127.0.0.1:5500"}})
 
 @app.route('/')
 def home():
@@ -441,6 +441,7 @@ def get_attendance(student_id):
         )
     except Exception as exc:
         return error_response(str(exc), 500)
+    
 # /subjectATTENDANCE
 @app.route("/api/subject-attendance/<student_id>")
 def subject_attendance(student_id):
@@ -469,6 +470,25 @@ def subject_attendance(student_id):
         return jsonify(result)
     except Exception as exc:
         return error_response(str(exc), 500)
+    
+# HISTORY ATTENDANCE
+@app.route("/api/attendance-history/<int:student_id>/<int:subject_id>")
+def attendance_history(student_id, subject_id):
+    try:
+        records = safe_data(
+            supabase.table("attendance")
+            .select("date, status")
+            .eq("student_id", student_id)
+            .eq("subject_id", subject_id)
+            .order("date", desc=True)
+            .execute()
+        )
+
+        return jsonify(records)
+
+    except Exception as exc:
+        return error_response(str(exc), 500)
+
 
 # -------------------------
 # 🧑‍🏫 MARK ATTENDANCE (VALIDATED)
