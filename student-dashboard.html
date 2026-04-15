@@ -106,6 +106,12 @@
             <p><b>Present:</b> <span id="modalPresent"></span></p>
             <p><b>Total Classes:</b> <span id="modalTotal"></span></p>
             <p><b>Marks:</b> <span id="modalMarks"></span></p>
+            <div class="mt-4">
+                <p class="font-bold mb-2">Attendance History</p>
+                <div id="modalHistory"
+                    class="max-h-40 overflow-y-auto border rounded-lg p-2 bg-slate-50 text-xs text-slate-700">
+                </div>
+            </div>
         </div>
 
         <button onclick="closeModal()" 
@@ -142,15 +148,57 @@
 
         return maxSkip < 0 ? 0 : maxSkip;
     }
-    function viewDetails(subjectName, percentage, present, total, marks) {
-        document.getElementById("modalSubjectName").innerText = subjectName;
-        document.getElementById("modalAttendance").innerText = percentage + "%";
-        document.getElementById("modalPresent").innerText = present;
-        document.getElementById("modalTotal").innerText = total;
-        document.getElementById("modalMarks").innerText = marks;
+    async function viewDetails(subjectId, subjectName, percentage, present, total, marks) {
+    document.getElementById("modalSubjectName").innerText = subjectName;
+    document.getElementById("modalAttendance").innerText = percentage + "%";
+    document.getElementById("modalPresent").innerText = present;
+    document.getElementById("modalTotal").innerText = total;
+    document.getElementById("modalMarks").innerText = marks;
 
-        document.getElementById("subjectModal").classList.remove("hidden");
+    const enrollment = localStorage.getItem("userId");
+
+    try {
+        const studentRes = await fetch(`${API_BASE}/api/student/${enrollment}`);
+        const student = await studentRes.json();
+
+        const historyRes = await fetch(
+            `${API_BASE}/api/attendance-history/${student.student_id}/${subjectId}`
+        );
+
+        const history = await historyRes.json();
+
+        const historyBox = document.getElementById("modalHistory");
+
+        if (!history || history.length === 0) {
+            historyBox.innerHTML = `
+                <div class="text-slate-400 text-center py-2">
+                    No attendance history found
+                </div>
+            `;
+        } else {
+            historyBox.innerHTML = history.map(item => `
+                <div class="flex justify-between items-center border-b py-1">
+                    <span>${item.date}</span>
+                    <span class="${
+                        item.status === 'Present'
+                            ? 'text-emerald-600 font-semibold'
+                            : 'text-red-500 font-semibold'
+                    }">
+                        ${item.status}
+                    </span>
+                </div>
+            `).join('');
+        }
+
+    } catch (err) {
+        document.getElementById("modalHistory").innerHTML = `
+            <div class="text-red-500">Failed to load history</div>
+        `;
+        console.error(err);
     }
+
+    document.getElementById("subjectModal").classList.remove("hidden");
+}
 
     function closeModal() {
         document.getElementById("subjectModal").classList.add("hidden");
@@ -276,7 +324,8 @@
         ${skipMsg}
     </p>
 
-                <button onclick="viewDetails(
+    <button onclick="viewDetails(
+        ${subjectId},
         '${subjectName}',
         ${att.percentage},
         ${att.present},

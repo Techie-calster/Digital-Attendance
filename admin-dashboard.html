@@ -202,17 +202,39 @@
     // --- STANDARD MANAGEMENT (STUDENTS/FACULTY/SUBJECTS) ---
 
     async function submitData() {
-        const payload = {};
-        const fields = schema[currentTable];
-        
-        // 1. Collect data from inputs
+    const payload = {};
+    let fields = [];
+
+    // Special handling for Enrollment tab
+    if (currentTable === 'assign-subject') {
+        payload.student_id = parseInt(document.getElementById('field_student_id').value);
+        payload.subject_id = parseInt(document.getElementById('field_subject_id').value);
+    } else {
+        fields = schema[currentTable];
+
         fields.forEach(field => {
             const input = document.getElementById(`field_${field}`);
-            payload[field] = (input.type === 'number') ? parseInt(input.value) : input.value;
+            payload[field] = (input.type === 'number')
+                ? parseInt(input.value)
+                : input.value;
         });
+    }
 
         try {
-            const res = await fetch(`${API_BASE}/admin/${currentTable}`, {
+            let endpoint = currentTable;
+
+            if (currentTable === 'assign-subject') {
+                endpoint = 'assign-subject';
+            }
+
+            console.log("Submitting to:", endpoint);
+            console.log("Payload JSON:", JSON.stringify(payload));
+
+            const url = currentTable === 'assign-subject'
+                ? `${API_BASE}/assign-subject`
+                : `${API_BASE}/admin/${endpoint}`;
+
+            const res = await fetch(url, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(payload)
@@ -223,10 +245,10 @@
                 alert('Success: Record added.');
 
                 // --- CLEAR ALL FIELDS AFTER SUCCESS ---
-                fields.forEach(field => {
+                (schema[currentTable] || []).forEach(field => {
                     const input = document.getElementById(`field_${field}`);
                     if (input) {
-                        input.value = ''; // Reset the value
+                        input.value = '';
                     }
                 });
 
@@ -240,54 +262,124 @@
     }
 
     async function loadData() {
-        if (currentTable === 'attendance') return; // Handled by specialized fetch function
+    const display = document.getElementById('tableDisplay');
 
-        const display = document.getElementById('tableDisplay');
-        try {
-            const res = await fetch(`${API_BASE}/admin/${currentTable}`);
-            const data = await res.json();
-            
-            if (!data || data.length === 0) {
-                display.innerHTML = "No records found.";
-                return;
-            }
+    try {
+        // Attendance fixer should not auto-fetch immediately
+        if (currentTable === 'assign-subject') {
+            display.innerHTML = `
+                <div style="color:#cbd5e1; line-height:1.8;">
+                    <h3 style="color:white; margin-bottom:12px;">Enrollment Mapping</h3>
+                    <p>This section connects a student to a subject.</p>
 
-            let html = '<table><thead><tr>';
-            Object.keys(data[0]).forEach(key => html += `<th>${key}</th>`);
-            html += '</tr></thead><tbody>';
-            
-            data.forEach(row => {
-                html += '<tr>';
-                Object.values(row).forEach(val => {
-                    const cell = (typeof val === 'object' && val !== null) ? JSON.stringify(val) : val;
-                    html += `<td>${cell || '-'}</td>`;
-                });
-                html += '</tr>';
-            });
-            
-            display.innerHTML = html + '</tbody></table>';
-        } catch (err) {
-            display.innerHTML = "Error loading data.";
+                    <ul style="margin-top:12px; padding-left:20px;">
+                        <li>Enter the Student ID on the left</li>
+                        <li>Enter the Subject ID to assign</li>
+                        <li>Click "Commit to Database"</li>
+                    </ul>
+
+                    <div style="margin-top:16px; padding:12px; border-radius:10px; background:rgba(59,130,246,0.12); color:#93c5fd;">
+                        Example: Student ID = 3, Subject ID = 2 → Student 3 is enrolled in Subject 2
+                    </div>
+                </div>
+            `;
+            return;
         }
+
+        if (currentTable === 'attendance') {
+            display.innerHTML = `
+                <div style="color:#cbd5e1; line-height:1.8;">
+                    <h3 style="color:white; margin-bottom:12px;">Attendance Correction Panel</h3>
+                    <p>Use this section to correct attendance already marked by faculty.</p>
+
+                    <ul style="margin-top:12px; padding-left:20px;">
+                        <li>Enter the Subject ID</li>
+                        <li>Select the date of the class</li>
+                        <li>Click "Fetch Attendance for Fixing"</li>
+                        <li>You can then change Present ↔ Absent and save</li>
+                    </ul>
+
+                    <div style="margin-top:16px; padding:12px; border-radius:10px; background:rgba(239,68,68,0.12); color:#fca5a5;">
+                        Example: If a student was marked Absent by mistake, you can correct it here.
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        // Enrollment tab should fetch student-subject records, not assign-subject
+
+        let endpoint = currentTable;
+
+        if (currentTable === 'assign-subject') {
+            endpoint = 'student-subject';
+        }
+
+        const res = await fetch(`${API_BASE}/admin/${endpoint}`);
+
+        if (!res.ok) {
+            throw new Error(`HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        if (!data || data.length === 0) {
+            display.innerHTML = "No records found.";
+            return;
+        }
+
+        let html = '<table><thead><tr>';
+        Object.keys(data[0]).forEach(key => html += `<th>${key}</th>`);
+        html += '</tr></thead><tbody>';
+
+        data.forEach(row => {
+            html += '<tr>';
+            Object.values(row).forEach(val => {
+                const cell = (typeof val === 'object' && val !== null)
+                    ? JSON.stringify(val)
+                    : val;
+
+                html += `<td>${cell ?? '-'}</td>`;
+            });
+            html += '</tr>';
+        });
+
+        html += '</tbody></table>';
+        display.innerHTML = html;
+
+    } catch (err) {
+        console.error("loadData error:", err);
+        display.innerHTML = "Error loading data.";
     }
+}
 
     // --- ATTENDANCE FIXER LOGIC (ADMIN OVERRIDE) ---
 
     async function fetchAttendanceForAdmin() {
         const subId = document.getElementById('field_subject_id').value;
         const date = document.getElementById('field_date').value;
+        const formattedDate = date;
 
         if(!subId || !date) return alert("Subject ID and Date are required to locate mistakes.");
 
         try {
-            const res = await fetch(`${API_BASE}/admin/attendance-view?subject_id=${subId}&date=${date}`);
+            console.log("Subject:", subId);
+            console.log("Date:", date);
+            console.log("Formatted Date:", formattedDate);
+
+            const res = await fetch(`${API_BASE}/admin/attendance-view?subject_id=${subId}&date=${formattedDate}`);
+
+            console.log("Status:", res.status);
+
             const data = await res.json();
+            console.log("Returned data:", data);
+
             renderAttendanceEditor(data);
         } catch (err) {
-            alert("Failed to fetch attendance records.");
-        }
-    }
-
+    console.error(err);
+    alert("Failed to fetch attendance records: " + err.message);
+}
+}
     function renderAttendanceEditor(records) {
         const display = document.getElementById('tableDisplay');
         if (!records || records.length === 0) {
