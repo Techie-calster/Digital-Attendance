@@ -178,7 +178,7 @@
         
         const fields = schema[currentTable] || [];
         fields.forEach(field => {
-            let type = (field.includes('_id') || field === 'year') ? 'number' : 'text';
+            let type = (field.includes('_id') || field === 'year') ? 'text' : 'text';
             if (field === 'date') type = 'date';
 
             container.innerHTML += `
